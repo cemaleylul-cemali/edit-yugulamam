@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClipForge — Ücretsiz Web Video Editörü</title>
+<meta name="description" content="Tarayıcıda çalışan ücretsiz video düzenleyici: kesme, metin, efektler, geçişler, bindirme, ritim ve dışa aktarma. Kurulum ve kayıt yok, dosyalarınız cihazınızdan çıkmaz.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:title" content="ClipForge — Ücretsiz Web Video Editörü">
+<meta property="og:description" content="Tarayıcıda çalışan ücretsiz video düzenleyici: kesme, metin, efektler, geçişler, bindirme, ritim ve dışa aktarma. Kurulum ve kayıt yok, dosyalarınız cihazınızdan çıkmaz."><meta property="og:image" content="og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+:root{--bg:#0b0b0d;--panel:#151518;--panel2:#1d1d22;--line:#2a2a31;--txt:#ececf1;--mut:#8b8b97;--acc:#22d3ee;--acc2:#0ea5b7;--red:#ff3b4e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--txt);font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;grid-template-rows:50px minmax(0,1fr) 322px;overflow:hidden;user-select:none;-webkit-user-select:none}
+input,textarea,select{user-select:text;-webkit-user-select:text;font:inherit;color:var(--txt)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+svg{display:block}
+h3{font-size:14px;margin-bottom:10px}
+h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 8px}
+.hint{color:var(--mut);font-size:12px;margin:6px 0 10px}
+
+/* Header */
+header{display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.02em}
+.logo i{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--acc),#6366f1);display:block}
+#projName{background:transparent;border:1px solid transparent;border-radius:6px;padding:5px 8px;width:200px;font-weight:600}
+#projName:hover,#projName:focus{border-color:var(--line);background:var(--bg);outline:0}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:7px 12px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);font-weight:600;transition:.15s}
+.btn:hover{background:#26262d}
+.btn.primary{background:var(--acc);color:#04222a;border-color:var(--acc)}
+.btn.primary:hover{background:#5be3f5}
+.btn.danger:hover{background:#3a1218;border-color:var(--red);color:#ff8794}
+.btn.wide{width:100%}
+select,.sel{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+select:focus,textarea:focus,input:focus-visible{outline:1px solid var(--acc)}
+
+/* Main layout */
+main{display:grid;grid-template-columns:330px minmax(0,1fr) 300px;min-height:0}
+.left{display:flex;background:var(--panel);border-right:1px solid var(--line);min-height:0}
+.rail{width:72px;border-right:1px solid var(--line);padding:6px 0;display:flex;flex-direction:column;gap:0;flex:none;overflow-y:auto}
+.rail button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;font-size:11px;color:var(--mut);border-left:2px solid transparent}
+.rail button:hover{color:var(--txt)}
+.rail button.on{color:var(--acc);background:#0f1f24;border-left-color:var(--acc)}
+.tabs{flex:1;overflow:auto;padding:14px;min-width:0}
+.tab{display:none}.tab.on{display:block}
+.drop{border:1.5px dashed var(--line);border-radius:10px;padding:14px;text-align:center;color:var(--mut);margin:10px 0}
+.drop.over{border-color:var(--acc);color:var(--acc)}
+.assets{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.asset{background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative}
+.asset .th{aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;color:var(--mut);overflow:hidden}
+.asset .th video,.asset .th img{width:100%;height:100%;object-fit:cover}
+.asset .nm{padding:5px 7px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset .add{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#04222a;display:flex;align-items:center;justify-content:center}
+.asset .du{position:absolute;left:5px;top:5px;background:rgba(0,0,0,.7);padding:0 5px;border-radius:4px;font-size:10px}
+.listempty{color:var(--mut);font-size:12px;grid-column:1/-1;text-align:center;padding:10px}
+textarea,input[type=text],input[type=number]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;resize:vertical}
+.presets,.fgrid,.spd{display:grid;gap:8px;margin-top:10px}
+.presets{grid-template-columns:1fr 1fr}
+.fgrid{grid-template-columns:1fr 1fr 1fr}
+.spd{grid-template-columns:repeat(4,1fr)}
+.fcard{background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;text-align:center;font-size:11px}
+.fcard:hover{border-color:var(--acc)}
+.fcard .sw{height:46px;background:linear-gradient(135deg,#f97316,#eab308,#22d3ee,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px}
+.fcard .sw.e{background:#23232b}
+.fcard span{display:block;padding:4px}
+
+/* Center */
+.center{display:grid;grid-template-rows:minmax(0,1fr) auto auto;min-width:0;min-height:0;background:#08080a}
+#stage{display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;padding:12px}
+#cv{background:#000;box-shadow:0 8px 40px rgba(0,0,0,.6);touch-action:none;cursor:default;border-radius:2px}
+.seekwrap{padding:0 18px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:18px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:#34343c;border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:#34343c;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--acc);margin-top:-4.5px;border:0}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--acc);border:0}
+.controls{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 14px 12px;position:relative}
+.controls .time{position:absolute;left:18px;font-variant-numeric:tabular-nums;color:var(--mut)}
+.controls .time b{color:var(--txt);font-weight:600}
+.ib{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid var(--line)}
+.ib:hover{background:#2a2a32}
+.ib.play{width:44px;height:44px;background:var(--acc);color:#04222a;border-color:var(--acc)}
+
+/* Inspector */
+.right{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:14px;min-height:0}
+.sec{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.row{display:grid;grid-template-columns:82px 1fr 46px;align-items:center;gap:6px;margin-bottom:4px}
+.row label{color:#b9b9c4;font-size:12px}
+.row .val{text-align:right;font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+.row2{display:grid;grid-template-columns:82px 1fr;align-items:center;gap:6px;margin-bottom:8px}
+.row2 label{color:#b9b9c4;font-size:12px}
+.row2 input[type=color]{width:100%;height:30px;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:2px}
+.chk{display:flex;gap:14px;margin:8px 0;flex-wrap:wrap}
+.chk label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.info{background:var(--panel2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--mut);margin-bottom:6px}
+.empty{color:var(--mut);padding:8px 0}
+.acts{display:flex;gap:6px;margin-top:14px}
+.acts .btn{flex:1;padding:7px 4px}
+.keys{color:var(--mut);font-size:12px;line-height:1.7}
+
+/* Timeline */
+#timeline{background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-rows:42px minmax(0,1fr);min-height:0}
+.tl-tools{display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--line)}
+.tl-tools .btn{padding:5px 10px}
+.tl-tools .zoom{display:flex;align-items:center;gap:6px;width:170px;color:var(--mut)}
+#tlinfo{color:var(--mut);font-size:12px}
+.tl-body{display:flex;min-height:0;overflow:hidden}
+.tl-labels{width:84px;flex:none;border-right:1px solid var(--line);background:var(--panel)}
+.tl-labels div{display:flex;align-items:center;gap:6px;padding:0 10px;color:var(--mut);font-size:11px;border-bottom:1px solid var(--line)}
+.rh{height:28px}.vh{height:64px}.th{height:44px}.ah{height:52px}
+#tlScroll{flex:1;overflow:auto;position:relative;min-width:0}
+#tlContent{position:relative;min-height:100%}
+#ruler{height:28px;border-bottom:1px solid var(--line);position:relative;cursor:pointer;touch-action:none;background-image:linear-gradient(to right,#4a4a54 1px,transparent 1px);background-repeat:repeat-x;background-position:0 100%;background-size:12px 8px}
+.tick{position:absolute;top:0;bottom:0;border-left:1px solid #6a6a76;font-size:10px;color:var(--mut)}
+.tick span{position:absolute;left:4px;top:3px;white-space:nowrap}
+.track{position:relative;border-bottom:1px solid var(--line);background:rgba(255,255,255,.012)}
+#trk-v{height:64px}#trk-t{height:44px}#trk-a{height:52px}
+.clip{position:absolute;top:5px;bottom:5px;border-radius:7px;overflow:hidden;cursor:grab;display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.2);touch-action:none}
+.clip:active{cursor:grabbing}
+.k-video{background:linear-gradient(#2d93b8,#1c6a88)}
+.k-image{background:linear-gradient(#c2410c,#9a3412)}
+.k-text{background:linear-gradient(#8b5cf6,#6a3fd0)}
+.k-audio{background:repeating-linear-gradient(90deg,rgba(255,255,255,.25) 0 2px,transparent 2px 5px),linear-gradient(#18a34a,#12782f)}
+.clip.sel{outline:2px solid #fff;outline-offset:-1px;z-index:2}
+.lbl{pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;display:block}
+.h.l{left:0}.h.r{right:0}
+.clip:hover .h,.clip.sel .h{background:rgba(255,255,255,.4)}
+#playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--red);pointer-events:none;z-index:5}
+#playhead::before{content:"";position:absolute;top:0;left:-6px;border:7px solid transparent;border-top:11px solid var(--red);border-bottom:0}
+
+/* Modal & toast */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal[hidden]{display:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;width:min(420px,92vw)}
+.card .row2{margin-bottom:10px}
+.bar{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;margin:14px 0}
+#expBar{height:100%;width:0;background:var(--acc);transition:width .2s}
+.card .acts{margin-top:6px}
+#toast{position:fixed;left:50%;bottom:338px;transform:translateX(-50%);background:#26262d;border:1px solid var(--line);padding:8px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+#toast.on{opacity:1}
+#dropOverlay{position:fixed;inset:0;border:3px dashed var(--acc);background:rgba(34,211,238,.08);display:none;z-index:40;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--acc);pointer-events:none}
+#dropOverlay.on{display:flex}
+
+[hidden]{display:none!important}
+.logo{cursor:pointer}
+#home{position:fixed;inset:0;z-index:90;background:radial-gradient(1200px 700px at 20% 10%,#12303a 0,transparent 60%),radial-gradient(900px 600px at 90% 90%,#2a1b4d 0,transparent 55%),#0b0b0d;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px}
+#home .hw{max-width:760px;width:100%;text-align:center}
+.hlogo{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:22px;margin-bottom:26px}
+.hlogo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#6366f1);display:block}
+#home h1{font-size:clamp(28px,5vw,46px);line-height:1.1;margin-bottom:12px}
+#home p.sub{color:var(--mut);font-size:15px;margin-bottom:30px}
+.hcards{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.newcard{width:min(330px,100%);border-radius:18px;padding:30px 20px;background:linear-gradient(135deg,#0e7490,#22d3ee);color:#03222a;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 12px 50px rgba(34,211,238,.25);transition:.2s}
+.newcard:hover{transform:translateY(-3px);box-shadow:0 18px 60px rgba(34,211,238,.4)}
+.newcard .plus{width:56px;height:56px;border-radius:50%;background:#03222a;color:#22d3ee;font-size:34px;line-height:52px;margin-bottom:6px}
+.newcard b{font-size:18px}.newcard small{opacity:.75;font-size:13px}
+.newcard.alt{background:var(--panel2);color:var(--txt);border:1px solid var(--line);box-shadow:none;justify-content:center}
+.newcard.alt:hover{border-color:var(--acc)}
+.hdrop{margin:22px auto 0;max-width:520px;border:1.5px dashed #34343c;border-radius:14px;padding:16px;color:var(--mut)}
+.hdrop.over{border-color:var(--acc);color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:26px}
+.chips span{background:#16161a;border:1px solid var(--line);padding:5px 11px;border-radius:999px;color:#b9b9c4;font-size:12px}
+.stk{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.stk button{font-size:22px;padding:4px;background:var(--panel2);border:1px solid var(--line);border-radius:8px}
+.stk button:hover{border-color:var(--acc)}
+.spd2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.kfm{position:absolute;bottom:3px;width:9px;height:9px;margin-left:-4px;background:#ffd23f;transform:rotate(45deg);border:1px solid #6b5200;pointer-events:none;z-index:3}
+#toast{z-index:120}
+
+.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#2b1a00;border-color:#f59e0b}
+.gold:hover{background:linear-gradient(135deg,#fcd34d,#fbbf24)}
+.lock{font-style:normal;font-size:10px;margin-left:3px}
+.lockb{position:absolute;top:3px;right:4px;font-size:11px;z-index:2}
+body.is-pro .lock,body.is-pro .lockb{display:none}
+.fcard{position:relative}
+.acts{flex-wrap:wrap}
+.acts .btn{flex:1 1 auto}
+.tl-tools{overflow-x:auto;white-space:nowrap}
+.tl-tools .btn{flex:none}
+.tl-labels .tm{margin-left:auto;font-size:13px;background:none;padding:0 2px}
+.oh{height:52px}#trk-o{height:52px}
+#beats{position:absolute;left:0;right:0;top:28px;bottom:0;pointer-events:none;z-index:1}
+.beatline{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,215,64,.4)}
+.mvol{position:absolute;right:18px;display:flex;align-items:center;gap:6px;width:130px}
+.ib.sm{width:30px;height:30px;font-size:14px}
+.asset .add2{position:absolute;right:34px;top:5px;height:24px;padding:0 7px;border-radius:12px;background:#6366f1;color:#fff;font-size:10px;font-weight:700}
+.card.pro{text-align:center}
+.card.pro .crown{font-size:38px}
+.price{margin:6px 0 10px}.price b{font-size:34px;color:#fbbf24}.price small{display:block;color:var(--mut)}
+.perks{list-style:none;text-align:left;margin:8px 0 12px;display:grid;gap:5px;font-size:12.5px}
+.perks li::before{content:"✓ ";color:#22d3ee;font-weight:700}
+.lic{display:flex;gap:6px;margin:10px 0 4px}
+.lic input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px;text-transform:uppercase}
+.card.pro .btn.wide{margin-top:6px}
+
+.logo img{width:28px;height:28px;border-radius:8px;display:block}
+.hlogo img{width:46px;height:46px;border-radius:13px;display:block}
+#home{overflow:auto;align-items:flex-start}
+#home .hw{margin:auto;padding:34px 0}
+.plist{margin-top:34px;text-align:left}
+.plist h2{font-size:14px;color:var(--mut);margin-bottom:10px;font-weight:600}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.pcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;position:relative}
+.pcard:hover{border-color:var(--acc)}
+.pcard .th{aspect-ratio:16/9;background:#000 center/contain no-repeat}
+.pcard .pi{padding:8px 10px}.pcard .pi b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pcard .pi small{color:var(--mut);font-size:11px}
+.pcard .pa{position:absolute;top:6px;right:6px;display:flex;gap:4px}
+.pcard .pa button{height:26px;min-width:26px;border-radius:8px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;padding:0 7px}
+.pcard .pa button.warn{background:#dc2626}
+#saveInfo{font-size:11px;color:var(--mut);white-space:nowrap}
+.clip .lbl{position:relative;z-index:1}
+.wf{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:.75}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:10px 0;font-size:12.5px}
+.keys kbd{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font:12px ui-monospace,monospace;justify-self:start}
+#btnInsp,#sheetX,.zbtn,.lbl2{display:none}
+@media(max-width:900px){
+ html,body{height:100%}
+ body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+ header{order:0;flex:none;height:46px;padding:0 8px;gap:6px;flex-wrap:nowrap}
+ header .sp,#btnUpload,#btnProjects,#btnKeys,#saveInfo{display:none}
+ #projName{flex:1;min-width:0;width:auto;font-size:14px}
+ #aspect{width:64px;padding:5px 4px}
+ #btnExport .lbl{display:none}#btnExport .lbl2{display:inline}
+ main,.left{display:contents}
+ .center{order:1;flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+ #stage{flex:1 1 0;min-height:0;padding:6px}
+ .seekwrap{flex:none;padding:0 12px}
+ .controls{flex:none;padding:2px 10px 6px;justify-content:space-between;gap:6px}
+ .controls .time{position:static;font-size:12px;min-width:86px}
+ #btnStart,.mvol input{display:none}
+ .mvol{position:static;width:auto}
+ .ib{width:38px;height:38px}.ib.play{width:46px;height:46px}
+ #timeline{order:2;flex:none;height:218px;grid-template-rows:40px minmax(0,1fr)}
+ .tl-tools{gap:6px;padding:0 8px}
+ .tl-tools .btn{padding:6px 10px;font-size:12px;min-height:30px}
+ #btnInsp,.zbtn{display:inline-flex;align-items:center;justify-content:center}
+ #tlinfo,.tl-tools .zoom{display:none}
+ .tl-body{overflow-y:auto}
+ .tl-labels{width:34px}
+ .tl-labels div{font-size:0;padding:0;justify-content:center}
+ .tl-labels .tm{display:none}
+ .rh{height:24px!important}.vh,#trk-v{height:44px!important}.oh,#trk-o{height:36px!important}.th,#trk-t{height:30px!important}.ah,#trk-a{height:36px!important}
+ #ruler{height:24px}
+ .clip{touch-action:none}
+ .tabs{order:3;display:none;flex:none;height:42vh;height:42dvh;border-top:1px solid var(--line);background:var(--panel);padding:12px 12px 24px;overflow:auto;-webkit-overflow-scrolling:touch}
+ .right{order:3;display:none;flex:none;height:42vh;height:42dvh;border-left:0;border-top:1px solid var(--line);padding:12px 12px 24px}
+ .tabs h3,.right h3{padding-right:40px}
+ body[data-sheet=tab] .tabs,body[data-sheet=insp] .right{display:block}
+ body[data-sheet] #timeline{display:none}
+ body[data-sheet] #sheetX{display:flex;position:fixed;right:10px;bottom:calc(58px + 42vh - 40px);bottom:calc(58px + 42dvh - 40px);width:32px;height:32px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);align-items:center;justify-content:center;font-size:14px;z-index:40}
+ .rail{order:4;flex:none;height:58px;width:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;border-right:0;border-top:1px solid var(--line);padding:0;background:var(--panel)}
+ .rail button{flex:none;min-width:64px;padding:6px 4px;border-left:0;border-top:2px solid transparent}
+ .rail button.on{background:none;color:var(--mut);border-left-color:transparent}
+ body[data-sheet=tab] .rail button.on{color:var(--acc);border-top-color:var(--acc);background:#0f1f24}
+ #btnInsp.on{background:var(--acc);color:#04222a}
+ #toast{bottom:76px}
+ input[type=range]{height:26px}
+ .modal .card{max-height:92vh;max-height:92dvh;overflow:auto;width:min(94vw,440px)}
+}
+@media(max-width:900px) and (max-height:520px){
+ #timeline{height:150px}
+ .rh{height:20px!important}.vh,#trk-v{height:30px!important}.oh,#trk-o{height:22px!important}.th,#trk-t{height:22px!important}.ah,#trk-a{height:24px!important}
+ .rail{height:44px}.rail button{font-size:0;min-width:52px}
+ .tabs,.right{height:55vh}
+ body[data-sheet] #sheetX{bottom:calc(44px + 55vh - 40px)}
+}
+</style>
+</head>
+<body class="is-pro">
+
+<div id="home">
+  <div class="hw">
+    <div class="hlogo"><img src="data:image/png;base64,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" alt="">ClipForge</div>
+    <h1>Videolarını tarayıcıda düzenle</h1>
+    <p class="sub">Kes, efekt ve geçiş ekle, metin yaz, hızı ayarla. Yükleme yok, her şey cihazında kalır.</p>
+    <div class="hcards">
+      <button class="newcard" id="homeNew"><span class="plus">+</span><b>Yeni Proje Oluştur</b><small>Bir video veya fotoğraf seç</small></button>
+      <button class="newcard alt" id="homeContinue" hidden><b>Projeye Devam Et</b><small id="homeInfo"></small></button>
+    </div>
+    <div class="plist" id="plist" hidden><h2>Projelerim</h2><div class="pgrid" id="pgrid"></div></div>
+    <div style="margin-top:14px"><button class="btn" id="btnInstall" hidden>⬇ Uygulamayı Yükle</button></div>
+    <div class="hdrop" id="homeDrop" style="margin-top:22px">veya bir dosyayı buraya sürükleyip bırak</div>
+    <div class="chips"><span>Efektler</span><span>Geçişler</span><span>Animasyonlar</span><span>Anahtar kare</span><span>Yeşil perde</span><span>Hız eğrisi</span><span>Dokular</span><span>Metin &amp; çıkartma</span><span>Renk düzeltme</span><span>MP4 / WebM</span></div>
+  </div>
+</div>
+<input type="file" id="homeInput" multiple hidden>
+
+<header>
+  <div class="logo" id="logo" title="Projelerim / Ana menü"><img src="data:image/png;base64,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" alt="">ClipForge</div>
+  <input id="projName" type="text" value="Adsız Proje" spellcheck="false" title="Proje adı">
+  <span id="saveInfo"></span>
+  <div class="sp"></div>
+  <button class="btn" id="btnProjects" title="Projelerim">Projelerim</button>
+  <button class="btn" id="btnKeys" title="Klavye kısayolları (?)">⌨</button>
+  <select id="aspect" title="En-boy oranı">
+    <option value="1280x720">16:9</option>
+    <option value="720x1280">9:16</option>
+    <option value="960x960">1:1</option>
+    <option value="960x720">4:3</option>
+  </select>
+  <button class="btn" id="btnUpload"><span data-ic="upload"></span>Video Yükle</button>
+  <button class="btn primary" id="btnExport"><span data-ic="download"></span><span class="lbl">Dışa Aktar / İndir</span><span class="lbl2">Aktar</span></button>
+  <input type="file" id="fileInput" multiple hidden>
+</header>
+
+<main>
+  <!-- SOL PANEL -->
+  <aside class="left">
+    <nav class="rail" id="rail">
+      <button class="on" data-tab="media"><span data-ic="film" data-s="22"></span>Medya</button>
+      <button data-tab="text"><span data-ic="type" data-s="22"></span>Metin</button>
+      <button data-tab="fx"><span data-ic="sliders" data-s="22"></span>Filtreler</button>
+      <button data-tab="trans"><span data-ic="shuffle" data-s="22"></span>Geçiş</button>
+      <button data-tab="fx2"><span data-ic="sparkle" data-s="22"></span>Efektler</button>
+      <button data-tab="tex"><span data-ic="layers" data-s="22"></span>Doku</button>
+      <button data-tab="speed"><span data-ic="clock" data-s="22"></span>Hız</button>
+      <button data-tab="audio"><span data-ic="music" data-s="22"></span>Ses</button>
+      <button data-tab="beat"><span data-ic="activity" data-s="22"></span>Ritim</button>
+    </nav>
+    <div class="tabs">
+      <section class="tab on" data-tab="media">
+        <h3>Medya</h3>
+        <button class="btn wide" id="btnUpload2"><span data-ic="plus"></span>Dosya Yükle</button>
+        <div class="drop" id="drop">Video, ses veya görsel dosyalarını buraya sürükleyin. Kartlardaki <b>PIP</b> düğmesi dosyayı bindirme (üst katman) olarak ekler.</div>
+        <div class="assets" id="assetList"></div>
+      </section>
+
+      <section class="tab" data-tab="text">
+        <h3>Metin Ekle</h3>
+        <textarea id="newText" rows="3" placeholder="Yazınızı girin…">Merhaba!</textarea>
+        <button class="btn primary wide" id="btnAddText" style="margin-top:8px"><span data-ic="plus"></span>Metin Ekle</button>
+        <p class="hint">Stil şablonları: Seçili bir metin varsa ona uygulanır, yoksa yeni metin eklenir. Metni önizlemede sürükleyerek de taşıyabilirsiniz.</p>
+        <div class="presets" id="textPresets"></div>
+        <div class="sec"><h4>Çıkartmalar</h4><div class="stk" id="stickers"></div></div>
+      </section>
+
+      <section class="tab" data-tab="fx">
+        <h3>Filtreler &amp; Efektler</h3>
+        <p class="hint">Seçili video/görsel klibine uygulanır (seçili değilse oynatma çubuğundaki klip). Ayrıntılı değerler Ayarlar panelinde.</p>
+        <div class="fgrid" id="filterGrid"></div>
+        <div class="sec"><h4>Geçiş efekti</h4>
+          <div class="acts" style="margin-top:0">
+            <button class="btn" id="fxFadeIn">Solarak Gir</button>
+            <button class="btn" id="fxFadeOut">Solarak Çık</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab" data-tab="fx2">
+        <h3>Hareket &amp; Özel Efektler</h3>
+        <p class="hint">Seçili klibe uygulanır; aynı karta tekrar basınca kaldırır. Şiddet ve hız ayarları Ayarlar panelinde.</p>
+        <div class="fgrid" id="fxGrid"></div>
+      </section>
+
+      <section class="tab" data-tab="tex">
+        <h3>Dokular</h3>
+        <p class="hint">Seçili klibin üzerine doku katmanı ekler. Yoğunluğu Ayarlar panelinden ayarlayın.</p>
+        <div class="fgrid" id="texGrid"></div>
+      </section>
+
+      <section class="tab" data-tab="trans">
+        <h3>Geçişler &amp; Animasyonlar</h3>
+        <h4>Geçiş</h4>
+        <p class="hint">Seçili klibin başında, önceki klipten bu geçişle girilir.</p>
+        <div class="fgrid" id="transGrid"></div>
+        <div class="sec"><h4>Giriş animasyonu</h4><div class="fgrid" id="animInGrid"></div></div>
+        <div class="sec"><h4>Çıkış animasyonu</h4><div class="fgrid" id="animOutGrid"></div></div>
+      </section>
+
+      <section class="tab" data-tab="speed">
+        <h3>Hız Kontrolü</h3>
+        <p class="hint">Seçili video veya ses klibinin oynatma hızını değiştirir. Klip süresi buna göre kısalır/uzar.</p>
+        <div class="spd" id="speedBtns">
+          <button class="btn" data-s="0.25">0.25x</button><button class="btn" data-s="0.5">0.5x</button>
+          <button class="btn" data-s="1">1x</button><button class="btn" data-s="1.5">1.5x</button>
+          <button class="btn" data-s="2">2x</button><button class="btn" data-s="3">3x</button>
+          <button class="btn" data-s="4">4x</button>
+        </div>
+        <div class="row" style="margin-top:14px"><label>Özel</label><input type="range" id="spd" min="0.25" max="4" step="0.05" value="1"><span class="val" id="spdv">1x</span></div>
+        <div class="sec"><h4>Hız eğrisi</h4><div class="spd2" id="curveBtns"></div></div>
+        <div class="sec"><h4>Zaman araçları</h4>
+          <button class="btn wide" id="btnReverse">Ters Çevir (aç/kapat)</button>
+          <button class="btn wide" id="btnFreeze2" style="margin-top:8px">Kareyi Dondur (2 sn)</button>
+          <p class="hint">Ters çevirme kare atlayarak çalışır; kısa kliplerde kullanın.</p>
+        </div>
+      </section>
+
+      <section class="tab" data-tab="beat">
+        <h3>Ritim (Beat)</h3>
+        <p class="hint">Seçili müzik veya video klibinin ritmini bulur ve zaman çizelgesine sarı çizgilerle işaretler. B tuşuyla elle de işaretleyebilirsiniz.</p>
+        <button class="btn primary wide" id="btnBeat">Ritmi Analiz Et</button>
+        <div class="acts"><button class="btn" id="btnBeatMark">Elle İşaretle (B)</button><button class="btn" id="btnBeatClear">Temizle</button></div>
+        <div class="info" id="bpmInfo" style="margin-top:10px">Henüz ritim işareti yok</div>
+        <div class="sec"><h4>Ritme göre düzenle</h4>
+          <div class="row2"><label>Her</label><select id="beatN"><option value="1">1 vuruşta</option><option value="2">2 vuruşta</option><option value="4" selected>4 vuruşta</option><option value="8">8 vuruşta</option></select></div>
+          <button class="btn wide" id="btnBeatCut">Seçili Videoyu Ritme Göre Kes</button>
+          <button class="btn wide" id="btnBeatZoom" style="margin-top:8px">Ritimde Zoom Vur</button>
+        </div>
+      </section>
+
+      <section class="tab" data-tab="audio">
+        <h3>Ses / Müzik</h3>
+        <button class="btn wide" id="btnUploadAudio"><span data-ic="music"></span>Müzik / Ses Yükle</button>
+        <div class="row" style="margin-top:14px"><label>Ses düzeyi</label><input type="range" id="vol" min="0" max="100" step="1" value="100"><span class="val" id="volv">100%</span></div>
+        <p class="hint">Ses düzeyi seçili video veya ses klibine uygulanır.</p>
+        <div class="assets" id="audioList"></div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- ORTA -->
+  <section class="center">
+    <div id="stage"><canvas id="cv" width="1280" height="720"></canvas></div>
+    <div class="seekwrap"><input type="range" id="seek" min="0" max="1000" value="0"></div>
+    <div class="controls">
+      <div class="time"><b id="tcur">00:00</b> / <span id="ttot">00:00</span></div>
+      <button class="ib" id="btnStart" title="Başa dön"><span data-ic="start"></span></button>
+      <button class="ib" id="btnBack" title="5 sn geri"><span data-ic="back"></span></button>
+      <button class="ib play" id="btnPlay" title="Oynat / Duraklat (Boşluk)"></button>
+      <button class="ib" id="btnFwd" title="5 sn ileri"><span data-ic="fwd"></span></button>
+      <button class="ib" id="btnShot" title="Bu kareyi PNG olarak kaydet">📷</button>
+      <div class="mvol"><button class="ib sm" id="btnMaster" title="Genel ses aç/kapat">🔊</button><input type="range" id="masterVol" min="0" max="100" value="100" title="Genel ses"></div>
+    </div>
+  </section>
+
+  <!-- SAĞ PANEL -->
+  <aside class="right" id="inspector"></aside>
+</main>
+
+<!-- ZAMAN ÇİZELGESİ -->
+<section id="timeline">
+  <div class="tl-tools">
+    <button class="btn" id="btnInsp" title="Seçili klibin ayarları">⚙ Ayarlar</button>
+    <button class="btn" id="btnSplit" title="Böl (S)"><span data-ic="scissors"></span>Böl</button>
+    <button class="btn" id="btnUndo" title="Geri al (Ctrl+Z)">↶</button>
+    <button class="btn" id="btnRedo" title="Yinele (Ctrl+Y)">↷</button>
+    <button class="btn" id="btnDup" title="Çoğalt (Ctrl+D)">Çoğalt</button>
+    <button class="btn" id="btnTrimS" title="Başı kırp (Q)">◤ Başı Kırp</button>
+    <button class="btn" id="btnTrimE" title="Sonu kırp (W)">Sonu Kırp ◥</button>
+    <button class="btn" id="btnMute" title="Klip sesini aç/kapat (M)">🔊 Ses</button>
+    <button class="btn" id="btnFreeze" title="Kareyi dondur"><span data-ic="clock"></span>Dondur</button>
+    <button class="btn danger" id="btnDel" title="Sil (Del)"><span data-ic="trash"></span>Sil</button>
+    <span id="tlinfo"></span>
+    <div class="sp"></div>
+    <button class="btn zbtn" id="zout" title="Uzaklaştır">−</button><button class="btn zbtn" id="zin" title="Yakınlaştır">＋</button>
+    <div class="zoom">−<input type="range" id="zoom" min="10" max="240" value="60">+</div>
+  </div>
+  <div class="tl-body">
+    <div class="tl-labels">
+      <div class="rh"></div>
+      <div class="vh"><span data-ic="film" data-s="14"></span>Video<button class="tm" data-tm="v" title="Bu katmanın sesini aç/kapat">🔊</button></div>
+      <div class="oh"><span data-ic="layers" data-s="14"></span>Bindirme<button class="tm" data-tm="o" title="Bu katmanın sesini aç/kapat">🔊</button></div>
+      <div class="th"><span data-ic="type" data-s="14"></span>Metin</div>
+      <div class="ah"><span data-ic="music" data-s="14"></span>Ses<button class="tm" data-tm="a" title="Ses katmanını aç/kapat">🔊</button></div>
+    </div>
+    <div id="tlScroll">
+      <div id="tlContent">
+        <div id="ruler"></div>
+        <div class="track" id="trk-v"></div>
+        <div class="track" id="trk-o"></div>
+        <div class="track" id="trk-t"></div>
+        <div class="track" id="trk-a"></div>
+        <div id="beats"></div>
+        <div id="playhead"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="exportModal" hidden>
+  <div class="card">
+    <h3>Dışa Aktar</h3>
+    <div class="row2"><label>Biçim</label>
+      <select id="expFmt"><option value="mp4">MP4</option><option value="webm">WebM</option></select></div>
+    <div class="row2"><label>Çözünürlük</label>
+      <select id="expRes"><option value="480">480p (SD)</option><option value="720" selected>720p (HD)</option><option value="1080">1080p (Full HD)</option><option value="2160">2160p (4K)</option></select></div>
+    <div class="row2"><label>Kare hızı</label>
+      <select id="expFps"><option value="24">24 fps</option><option value="30" selected>30 fps</option><option value="60">60 fps</option></select></div>
+    <div class="row2"><label>Kalite</label>
+      <select id="expQ"><option value="3000000">Düşük</option><option value="6000000" selected>Orta</option><option value="12000000">Yüksek</option><option value="25000000">Çok yüksek</option></select></div>
+    <div class="info" id="expInfo"></div>
+    <p class="hint" id="expHint">Dışa aktarma gerçek zamanlı çalışır: video süresi kadar sürer. İşlem bitene kadar bu sekmeyi açık tutun. Videonun sağ alt köşesine ClipForge logosu eklenir.</p>
+    <div class="bar"><div id="expBar"></div></div>
+    <div class="acts">
+      <button class="btn" id="expClose">Kapat</button>
+      <button class="btn primary" id="expStart">Başlat</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="keysModal" hidden>
+  <div class="card">
+    <h3>Klavye kısayolları</h3>
+    <div class="keys">
+      <kbd>Boşluk</kbd><span>Oynat / duraklat</span>
+      <kbd>S</kbd><span>Oynatma çubuğundan böl</span>
+      <kbd>Q / W</kbd><span>Başı / sonu kırp</span>
+      <kbd>M</kbd><span>Klip sesini aç / kapat</span>
+      <kbd>B</kbd><span>Ritim işareti ekle</span>
+      <kbd>Delete</kbd><span>Seçili klibi sil</span>
+      <kbd>← / →</kbd><span>1 kare geri / ileri (Shift: 1 sn)</span>
+      <kbd>Ctrl+Z / Y</kbd><span>Geri al / yinele</span>
+      <kbd>Ctrl+D</kbd><span>Klibi çoğalt</span>
+      <kbd>Ctrl+tekerlek</kbd><span>Zaman çizelgesini yakınlaştır</span>
+      <kbd>?</kbd><span>Bu pencere</span>
+    </div>
+    <p class="hint">Projeleriniz bu tarayıcıda otomatik kaydedilir; ana menüden tekrar açabilirsiniz.</p>
+    <div class="acts"><button class="btn primary" id="keysClose">Kapat</button></div>
+  </div>
+</div>
+<button id="sheetX" aria-label="Paneli kapat">✕</button>
+<div id="toast"></div>
+<div id="dropOverlay">Dosyaları bırakın</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const cv = $('#cv'), ctx = cv.getContext('2d');
+let W = 1280, H = 720;
+const state = { clips: [], assets: [], sel: null, cur: 0, playing: false, pps: 60, bg: '#000000', exporting: false, onEnd: null };
+let uid = 1, dirty = true, playStartWall = 0, playStartT = 0, seeking = false;
+const nid = () => 'i' + (uid++);
+
+/* ---------- İkonlar ---------- */
+const IC = {
+  play: '<polygon points="6 4 20 12 6 20 6 4" fill="currentColor"/>',
+  pause: '<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>',
+  back: '<polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/>',
+  fwd: '<polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/>',
+  start: '<polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>',
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  film: '<rect x="2" y="2" width="20" height="20" rx="2.2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>',
+  type: '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>',
+  sliders: '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  sparkle: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4"/>',
+  layers: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  shuffle: '<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>',
+  activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'
+};
+const ic = (n, s = 18) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+$$('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic, +e.dataset.s || 18));
+
+/* ---------- Yardımcılar ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function fmt(t, dec) {
+  t = Math.max(0, t || 0);
+  const m = Math.floor(t / 60), s = Math.floor(t % 60);
+  let r = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  if (dec) r += '.' + Math.floor((t % 1) * 10);
+  return r;
+}
+let toastT;
+function toast(msg, ms = 2400) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms);
+}
+const isMedia = c => c.kind === 'video' || c.kind === 'audio';
+const isVisual = c => c.kind === 'video' || c.kind === 'image';
+const dur = c => isMedia(c) ? (c.srcOut - c.srcIn) / c.speed : c.dur;
+const endOf = c => c.start + dur(c);
+const total = () => state.clips.reduce((m, c) => Math.max(m, endOf(c)), 0);
+const trackOf = c => c.kind === 'text' ? 't' : c.kind === 'audio' ? 'a' : (c.layer === 'over' ? 'o' : 'v');
+const byId = id => state.clips.find(c => c.id === id);
+const getSel = () => state.sel ? byId(state.sel) : null;
+const activeAt = t => state.clips.filter(c => t >= c.start && t < endOf(c));
+
+const DEF_VIS = () => ({ scale: 100, x: 0, y: 0, rot: 0, opacity: 100, brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, hue: 0, blur: 0, cinematic: 0, fadeIn: 0, fadeOut: 0, temp: 0, tint: 0, fade: 0, vignette: 0, shake: 0, shakeHz: 12, motionBlur: 0, mbAngle: 0, pulse: 0, pulseHz: 2, zoomBlur: 0, fan: 0, glitch: 0, rgb: 0, pixel: 0, flash: 0, invert: false, mirror: false, tex: 'none', texAmt: 55, animIn: 'none', animOut: 'none', animDur: .6, trans: 'none', transDur: .6, chroma: false, chromaColor: '#00ff00', chromaTol: 40, chromaSoft: 25, posterize: 0, wave: 0, tile: false, disco: 0, glow: 0, bgBlur: false, blend: 'source-over', curve: 'none', reverse: false, kf: [], mute: false, layer: 'main', cropL: 0, cropR: 0, cropT: 0, cropB: 0, round: 0, border: 0, borderColor: '#ffffff' });
+const DEF_FX = () => ({ brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, hue: 0, blur: 0, cinematic: 0, temp: 0, tint: 0, fade: 0, vignette: 0 });
+const DEF = Object.assign(DEF_VIS(), { speed: 1, volume: 100 });
+Object.assign(state, { trackMute: { v: false, o: false, a: false }, master: 1, masterMute: false, beats: [], bpm: 0 });
+const K = () => Math.min(W, H) / 720;
+
+/* ---------- Premium ---------- */
+const PREMIUM = { price: '120 ₺', checkoutUrl: '' };
+const pro = true; // tüm özellikler ücretsiz
+const PRO_DEFAULTS = { motionBlur: 0, glitch: 0, rgb: 0, pixel: 0, wave: 0, tile: false, posterize: 0, glow: 0, disco: 0, zoomBlur: 0, fan: 0, chroma: false, bgBlur: false, curve: 'none', reverse: false, blend: 'source-over', cinematic: 0 };
+const PRO_NAMES = { motionBlur: 'Hareket bulanıklığı', glitch: 'Glitch', rgb: 'RGB ayırma', pixel: 'Piksel efekti', wave: 'Dalga efekti', tile: "4'lü ayna", posterize: 'Posterize', glow: 'Parıltı', disco: 'Disko ışığı', zoomBlur: 'Zoom bulanıklığı', fan: 'Fan efekti', chroma: 'Chroma key', bgBlur: 'Bulanık arka plan', curve: 'Hız eğrisi', reverse: 'Ters oynatma', blend: 'Karışım modları', cinematic: 'Sinematik efekt', tex: 'Premium doku', trans: 'Premium geçiş', animIn: 'Premium animasyon', animOut: 'Premium animasyon' };
+const PRO_KEYS = new Set([...Object.keys(PRO_DEFAULTS), 'tex', 'trans', 'animIn', 'animOut']);
+const PRO_TEX = new Set(['vhs', 'leak', 'bokeh', 'snow', 'rain', 'star', 'flare']);
+const PRO_TRANS = new Set(['slideU', 'slideD', 'zoom', 'spin', 'wipe', 'flash', 'glitch', 'dip']);
+const PRO_ANIM = new Set(['zoomout', 'spin', 'pop', 'blur', 'type']);
+const PRO_FILTERS = new Set(['Film Noir', 'Teal-Orange', 'Neon Gece', 'Gün Batımı']);
+function proKeyOn(k, v) {
+  if (k in PRO_DEFAULTS) return v !== PRO_DEFAULTS[k];
+  if (k === 'tex') return PRO_TEX.has(v);
+  if (k === 'trans') return PRO_TRANS.has(v);
+  if (k === 'animIn' || k === 'animOut') return PRO_ANIM.has(v);
+  return false;
+}
+function usesPro() {
+  const n = new Set();
+  state.clips.forEach(c => { PRO_KEYS.forEach(k => { if (c[k] !== undefined && proKeyOn(k, c[k])) n.add(PRO_NAMES[k]); }); if (c.kf && c.kf.length) n.add('Anahtar kare'); });
+  return [...n];
+}
+function showPremium() {}
+function requirePro() { return true; }
+function updateProUI() { document.body.classList.add('is-pro'); if (typeof renderInspector === 'function') renderInspector(); }
+
+/* ---------- Medya elemanları ---------- */
+function makeEl(url, kind) {
+  if (kind === 'image') { const i = new Image(); i.onload = () => dirty = true; i.src = url; return i; }
+  const el = document.createElement(kind);
+  el.preload = 'auto'; el.playsInline = true; el.src = url;
+  ['seeked', 'loadeddata', 'canplay'].forEach(ev => el.addEventListener(ev, () => dirty = true));
+  return el;
+}
+function probe(url, type) {
+  return new Promise((res, rej) => {
+    if (type === 'image') {
+      const i = new Image(); i.onload = () => res({ dur: 5, w: i.naturalWidth || 1280, h: i.naturalHeight || 720 }); i.onerror = () => rej(new Error('görsel çözülemedi')); i.src = url; return;
+    }
+    const m = document.createElement(type); m.preload = 'metadata'; m.muted = true; m.playsInline = true;
+    const to = setTimeout(() => rej(new Error('zaman aşımı')), 20000);
+    m.onerror = () => { clearTimeout(to); rej(new Error('medya hatası' + (m.error ? ' (kod ' + m.error.code + ')' : ''))); };
+    m.onloadedmetadata = () => {
+      const fin = () => { clearTimeout(to); res({ dur: isFinite(m.duration) && m.duration > 0 ? m.duration : 10, w: m.videoWidth || 0, h: m.videoHeight || 0 }); };
+      if (!isFinite(m.duration)) { m.ontimeupdate = () => { m.ontimeupdate = null; fin(); }; m.currentTime = 1e101; }
+      else fin();
+    };
+    m.src = url;
+  });
+}
+function fileType(f) {
+  const t = (f.type || '').toLowerCase();
+  if (t.startsWith('video')) return 'video';
+  if (t.startsWith('audio')) return 'audio';
+  if (t.startsWith('image')) return 'image';
+  const e = (f.name.split('.').pop() || '').toLowerCase();
+  if (['mp4', 'webm', 'mov', 'mkv', 'm4v', 'ogv', 'avi', '3gp', 'wmv', 'flv', 'ts', 'mpg', 'mpeg'].includes(e)) return 'video';
+  if (['mp3', 'wav', 'ogg', 'oga', 'm4a', 'aac', 'flac', 'opus', 'wma', 'amr'].includes(e)) return 'audio';
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'avif', 'svg', 'heic', 'heif', 'tif', 'tiff', 'ico'].includes(e)) return 'image';
+  return null;
+}
+const isHeic = f => /\.(heic|heif)$/i.test(f.name) || /hei[cf]/i.test(f.type || '');
+function readDataURL(f) {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('dosya okunamadı')); r.readAsDataURL(f); });
+}
+function loadScript(src) {
+  return new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = () => rej(new Error('kütüphane yüklenemedi')); document.head.appendChild(el); });
+}
+async function heicToJpg(f) {
+  if (!window.heic2any) await loadScript('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js');
+  let out = await window.heic2any({ blob: f, toType: 'image/jpeg', quality: .92 });
+  if (Array.isArray(out)) out = out[0];
+  return new File([out], f.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+}
+// Dosyayı sırayla blob URL, sonra data URL ile dener; türü bilinmiyorsa video/ses/görsel olarak dener
+async function tryLoad(f, order) {
+  let last;
+  for (const ty of order) {
+    for (const mode of ['blob', 'data']) {
+      if (mode === 'data' && f.size > 250 * 1048576) continue;
+      let url;
+      try { url = mode === 'blob' ? URL.createObjectURL(f) : await readDataURL(f); } catch (e) { last = e; continue; }
+      try { return { url, type: ty, meta: await probe(url, ty) }; }
+      catch (e) { last = e; if (mode === 'blob') URL.revokeObjectURL(url); }
+    }
+  }
+  throw last || new Error('bilinmeyen hata');
+}
+async function loadFile(f) {
+  let type = fileType(f);
+  const order = type ? [type] : ['video', 'audio', 'image'];
+  try { return await tryLoad(f, order); }
+  catch (e) {
+    if (type === 'image' && isHeic(f)) { toast('HEIC dönüştürülüyor…', 60000); const j = await heicToJpg(f); return await tryLoad(j, ['image']); }
+    throw e;
+  }
+}
+function explainErr(f, e) {
+  const t = fileType(f), m = (e && e.message) || '';
+  if (t === 'image' && isHeic(f)) return 'HEIC dönüştürülemedi (internet bağlantısı gerekir). JPG/PNG deneyin. ' + m;
+  if (t === 'video') return 'tarayıcı bu video codec\'ini çözemiyor (ör. iPhone HEVC/H.265 .mov, .mkv, .avi). MP4 (H.264) veya WebM\'e çevirin. [' + m + ']';
+  if (t === 'audio') return 'bu ses biçimi desteklenmiyor. MP3/WAV/M4A deneyin. [' + m + ']';
+  if (!t) return 'dosya türü tanınmadı. [' + m + ']';
+  return m;
+}
+async function addFiles(files) {
+  for (const f of files) {
+    toast('Yükleniyor: ' + f.name, 60000);
+    let r;
+    try { r = await loadFile(f); }
+    catch (e) { console.error(e); toast('Açılamadı: ' + f.name + ' — ' + explainErr(f, e), 8000); continue; }
+    const asset = { id: nid(), name: f.name, type: r.type, url: r.url, dur: r.meta.dur, w: r.meta.w, h: r.meta.h };
+    state.assets.push(asset);
+    if (r.type === 'video' && !state.clips.some(isVisual)) autoAspect(r.meta.w, r.meta.h);
+    addAssetToTimeline(asset);
+  }
+  renderAssets();
+}
+function autoAspect(w, h) {
+  if (!w || !h) return;
+  let v = '1280x720';
+  if (h > w * 1.2) v = '720x1280'; else if (Math.abs(w / h - 1) < 0.1) v = '960x960'; else if (Math.abs(w / h - 4 / 3) < 0.05) v = '960x720';
+  $('#aspect').value = v; setAspect(v);
+}
+function addAssetToTimeline(a, over) {
+  const c = { id: nid(), kind: a.type, name: a.name, url: a.url, volume: 100, speed: 1, start: 0, ...DEF_VIS() };
+  const asOver = over && a.type !== 'audio';
+  if (asOver) { c.layer = 'over'; c.scale = 40; c.x = 28; c.y = -26; c.start = state.cur; }
+  else if (a.type === 'audio') c.start = state.cur;
+  else c.start = state.clips.filter(x => trackOf(x) === 'v').reduce((m, x) => Math.max(m, endOf(x)), 0);
+  if (a.type === 'image') c.dur = 5;
+  else { c.srcIn = 0; c.srcOut = a.dur; c.mediaDur = a.dur; }
+  c.el = makeEl(a.url, a.type);
+  state.clips.push(c);
+  renderTimeline(); select(c.id);
+  seekTo(c.start);
+  commit();
+  toast((asOver ? 'Bindirme olarak eklendi: ' : 'Eklendi: ') + a.name);
+}
+
+/* ---------- Çizim ---------- */
+function filterStr(c) {
+  const k = (c.cinematic || 0) / 100;
+  const f = [];
+  const b = c.brightness - 5 * k, ct = c.contrast + 18 * k, sa = c.saturate + 12 * k, se = c.sepia + 14 * k;
+  if (b !== 100) f.push(`brightness(${b}%)`);
+  if (ct !== 100) f.push(`contrast(${ct}%)`);
+  if (sa !== 100) f.push(`saturate(${sa}%)`);
+  if (c.grayscale) f.push(`grayscale(${c.grayscale}%)`);
+  if (se) f.push(`sepia(${se}%)`);
+  if (c.hue) f.push(`hue-rotate(${c.hue}deg)`);
+  if (c.invert) f.push('invert(100%)');
+  if (c.blur || c.blurAdd) f.push(`blur(${((c.blur || 0) + (c.blurAdd || 0)) * K()}px)`);
+  return f.length ? f.join(' ') : 'none';
+}
+function fadeMul(c, t) {
+  const l = t - c.start, d = dur(c); let m = 1;
+  if (c.fadeIn > 0) m *= Math.min(1, l / c.fadeIn);
+  if (c.fadeOut > 0) m *= Math.min(1, (d - l) / c.fadeOut);
+  return clamp(m, 0, 1);
+}
+function cinematicFx(k, a) {
+  ctx.save();
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0b5d86'); g.addColorStop(1, '#ff8a3d');
+  ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = a * .55 * k; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = a;
+  const r = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75);
+  r.addColorStop(0, 'rgba(0,0,0,0)'); r.addColorStop(1, `rgba(0,0,0,${.65 * k})`);
+  ctx.fillStyle = r; ctx.fillRect(0, 0, W, H);
+  const bh = H * .1 * k; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, bh); ctx.fillRect(0, H - bh, W, bh);
+  ctx.restore();
+}
+/* ---- Efekt altyapısı ---- */
+const tmp = document.createElement('canvas'), tmp2 = document.createElement('canvas'), tmp3 = document.createElement('canvas');
+const g1 = tmp.getContext('2d'), g2 = tmp2.getContext('2d'), g3 = tmp3.getContext('2d');
+function ensureTmp() { for (const c of [tmp, tmp2, tmp3]) if (c.width !== W || c.height !== H) { c.width = W; c.height = H; } }
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const noise = (t, f, p) => (Math.sin(t * f + p) + .5 * Math.sin(t * f * 2.1 + p * 1.7) + .25 * Math.sin(t * f * 4.3 + p * 2.3)) / 1.75;
+const NOISE = [0, 1, 2, 3].map(() => { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'), d = g.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); return c; });
+const SCAN = (() => { const c = document.createElement('canvas'); c.width = 1; c.height = 4; const g = c.getContext('2d'); g.fillStyle = '#000'; g.fillRect(0, 2, 1, 2); return c; })();
+const PAT = {};
+const getPat = (k, cvs) => PAT[k] || (PAT[k] = ctx.createPattern(cvs, 'repeat'));
+
+function xform(c, t) {
+  let dx = 0, dy = 0, rot = 0, sc = 1;
+  if (c.shake > 0) { const a = c.shake / 100, hz = c.shakeHz; dx = noise(t, hz, 1) * a * W * .03; dy = noise(t, hz, 5) * a * H * .03; rot = noise(t, hz, 9) * a * .04; sc = 1 + a * .05; }
+  if (c.pulse > 0) { const p = .5 + .5 * Math.sin(2 * Math.PI * c.pulseHz * (t - c.start)); sc *= 1 + c.pulse / 100 * .18 * p * p; }
+  return { dx, dy, rot: rot + (c.rotAdd || 0) * Math.PI / 180, sc: sc * (c.sc || 1) };
+}
+function srcRect(c, vw, vh) {
+  const l = clamp(c.cropL || 0, 0, 90), r = clamp(c.cropR || 0, 0, 90), tp = clamp(c.cropT || 0, 0, 90), b = clamp(c.cropB || 0, 0, 90);
+  const fw = Math.max(.08, 1 - (l + r) / 100), fh = Math.max(.08, 1 - (tp + b) / 100);
+  return { sx: vw * l / 100, sy: vh * tp / 100, sw: vw * fw, sh: vh * fh };
+}
+function rrect(g, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); g.beginPath(); g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+}
+function paint(g, c, t, alpha) {
+  const el = c.el, vw = el.videoWidth || el.naturalWidth, vh = el.videoHeight || el.naturalHeight;
+  const q = srcRect(c, vw, vh), base = Math.min(W / q.sw, H / q.sh) * c.scale / 100, w = q.sw * base, h = q.sh * base;
+  const mb = c.motionBlur / 100, n = mb > 0 ? 8 : 1, ang = c.mbAngle * Math.PI / 180, f = filterStr(c);
+  for (let i = 0; i < n; i++) {
+    const u = n > 1 ? i / (n - 1) : 0, x = xform(c, t - u * mb * .1), off = n > 1 ? (u - .5) * mb * W * .05 : 0;
+    g.save(); g.globalAlpha = alpha / (i + 1); g.filter = f;
+    if (g === ctx && c.blend && c.blend !== 'source-over') g.globalCompositeOperation = c.blend;
+    g.translate(W / 2 + c.x / 100 * W + x.dx + Math.cos(ang) * off, H / 2 + c.y / 100 * H + x.dy + Math.sin(ang) * off);
+    g.rotate(c.rot * Math.PI / 180 + x.rot); g.scale(x.sc * (c.mirror ? -1 : 1), x.sc);
+    const rr = Math.min(w, h) * (c.round || 0) / 200;
+    if (rr > 0) { rrect(g, -w / 2, -h / 2, w, h, rr); g.clip(); }
+    g.drawImage(el, q.sx, q.sy, q.sw, q.sh, -w / 2, -h / 2, w, h);
+    if (c.border > 0) {
+      g.filter = 'none'; g.lineWidth = c.border * K() * 2; g.strokeStyle = c.borderColor || '#fff';
+      if (rr > 0) { rrect(g, -w / 2, -h / 2, w, h, rr); g.stroke(); } else g.strokeRect(-w / 2, -h / 2, w, h);
+    }
+    g.restore();
+  }
+}
+function swapBack() { g1.clearRect(0, 0, W, H); g1.drawImage(tmp2, 0, 0); }
+function rgbSplit(d) {
+  g2.clearRect(0, 0, W, H);
+  [['#f00', -d, 0], ['#0f0', 0, 0], ['#00f', d, d * .15]].forEach(([col, dx, dy]) => {
+    g3.globalCompositeOperation = 'source-over'; g3.clearRect(0, 0, W, H); g3.drawImage(tmp, 0, 0);
+    g3.globalCompositeOperation = 'multiply'; g3.fillStyle = col; g3.fillRect(0, 0, W, H);
+    g3.globalCompositeOperation = 'destination-in'; g3.drawImage(tmp, 0, 0);
+    g3.globalCompositeOperation = 'source-over';
+    g2.globalCompositeOperation = 'lighter'; g2.drawImage(tmp3, dx, dy);
+  });
+  g2.globalCompositeOperation = 'source-over'; swapBack();
+}
+function pixelPass(c) {
+  let img;
+  try { img = g1.getImageData(0, 0, W, H); } catch (e) { return; }
+  const d = img.data;
+  let kr = 0, kg = 255, kb = 0;
+  if (c.chroma) { const h = (c.chromaColor || '#00ff00').replace('#', ''); kr = parseInt(h.substr(0, 2), 16); kg = parseInt(h.substr(2, 2), 16); kb = parseInt(h.substr(4, 2), 16); }
+  const t0 = c.chromaTol / 100 * 220, sf = c.chromaSoft / 100 * 120 + 1;
+  const lv = Math.max(2, Math.round(8 - c.posterize / 100 * 6)), st = 255 / (lv - 1), ch = c.chroma, po = c.posterize > 0;
+  for (let i = 0; i < d.length; i += 4) {
+    if (ch) {
+      const dr = d[i] - kr, dg = d[i + 1] - kg, db = d[i + 2] - kb, dist = Math.sqrt(dr * dr + dg * dg + db * db);
+      if (dist < t0) { d[i + 3] = 0; continue; }
+      if (dist < t0 + sf) d[i + 3] = d[i + 3] * (dist - t0) / sf;
+    }
+    if (po) { d[i] = Math.round(d[i] / st) * st; d[i + 1] = Math.round(d[i + 1] / st) * st; d[i + 2] = Math.round(d[i + 2] / st) * st; }
+  }
+  g1.putImageData(img, 0, 0);
+}
+function advFx(c, t) {
+  if (c.chroma || c.posterize > 0) pixelPass(c);
+  if (c.wave > 0) {
+    g2.clearRect(0, 0, W, H); const amp = c.wave / 100 * W * .03;
+    for (let y = 0; y < H; y += 4) g2.drawImage(tmp, 0, y, W, 4, Math.sin(y * .03 + t * 4) * amp, y, W, 4);
+    swapBack();
+  }
+  if (c.tile) {
+    g2.clearRect(0, 0, W, H); const hw = W / 2, hh = H / 2;
+    [[0, 0, 1, 1], [1, 0, -1, 1], [0, 1, 1, -1], [1, 1, -1, -1]].forEach(([ix, iy, sx, sy]) => {
+      g2.save(); g2.translate(ix * hw + (sx < 0 ? hw : 0), iy * hh + (sy < 0 ? hh : 0)); g2.scale(sx * .5, sy * .5); g2.drawImage(tmp, 0, 0); g2.restore();
+    });
+    swapBack();
+  }
+  const R = rng(Math.floor(t * 14) * 7919 + 13);
+  let burst = false;
+  if (c.glitch > 0) {
+    const am = c.glitch / 100; g2.clearRect(0, 0, W, H); g2.drawImage(tmp, 0, 0);
+    if (R() < .3 + am * .5) {
+      burst = true; const n = 2 + Math.floor(am * 10);
+      for (let i = 0; i < n; i++) { const y = R() * H, h = H * (.01 + R() * .08 * (.3 + am)), dx = (R() - .5) * W * .2 * am; g2.drawImage(tmp, 0, y, W, h, dx, y, W, h); }
+    }
+    swapBack();
+  }
+  const d = c.rgb / 100 * W * .02 + (burst ? c.glitch / 100 * W * .012 : 0);
+  if (d > .3) rgbSplit(d);
+  if (c.pixel > 0) {
+    const s = Math.max(2, Math.round(c.pixel / 100 * 48)), sw = Math.ceil(W / s), sh = Math.ceil(H / s);
+    g3.globalCompositeOperation = 'source-over'; g3.clearRect(0, 0, W, H); g3.drawImage(tmp, 0, 0, W, H, 0, 0, sw, sh);
+    g2.clearRect(0, 0, W, H); g2.imageSmoothingEnabled = false; g2.drawImage(tmp3, 0, 0, sw, sh, 0, 0, sw * s, sh * s); g2.imageSmoothingEnabled = true; swapBack();
+  }
+  if (c.zoomBlur > 0 || c.fan > 0) {
+    const n = 10, z = c.zoomBlur / 100 * .2, r = c.fan / 100 * .35;
+    g2.clearRect(0, 0, W, H);
+    for (let i = 0; i < n; i++) {
+      const u = i / (n - 1); g2.save(); g2.globalAlpha = 1 / (i + 1);
+      g2.translate(W / 2, H / 2); g2.rotate((u - .5) * r); const sc = 1 + u * z; g2.scale(sc, sc); g2.drawImage(tmp, -W / 2, -H / 2); g2.restore();
+    }
+    swapBack();
+  }
+}
+function vignetteFx(k, a) {
+  ctx.save(); ctx.globalAlpha = a;
+  const r = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .3, W / 2, H / 2, Math.max(W, H) * .75);
+  r.addColorStop(0, 'rgba(0,0,0,0)'); r.addColorStop(1, `rgba(0,0,0,${Math.min(1, .85 * k)})`);
+  ctx.fillStyle = r; ctx.fillRect(0, 0, W, H); ctx.restore();
+}
+function textureFx(n, k, t, a) {
+  ctx.save();
+  const fr = Math.floor(t * 24), r = rng(fr * 131 + 7), s = W / 1000;
+  if (n === 'grain' || n === 'vhs') {
+    const gs = Math.max(1, Math.max(W, H) / 900), ox = r() * 256, oy = r() * 256;
+    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = a * k * (n === 'vhs' ? .5 : .85);
+    ctx.translate(-ox, -oy); ctx.scale(gs, gs);
+    ctx.fillStyle = getPat('n' + (fr % 4), NOISE[fr % 4]); ctx.fillRect(ox / gs, oy / gs, W / gs, H / gs);
+  } else if (n === 'dust') {
+    const r2 = rng(Math.floor(t * 12) * 977 + 5), cnt = Math.floor(10 + 50 * k);
+    ctx.globalAlpha = a * k;
+    for (let i = 0; i < cnt; i++) {
+      const x = r2() * W, y = r2() * H, rad = (.6 + r2() * 1.8) * s * 1.5;
+      ctx.fillStyle = r2() < .7 ? 'rgba(255,255,255,.8)' : 'rgba(0,0,0,.6)';
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, 7); ctx.fill();
+    }
+    if (r2() < .5) { const x = r2() * W, y = r2() * H * .5; ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = Math.max(1, s); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (r2() - .5) * 10 * s, y + H * (.2 + r2() * .5)); ctx.stroke(); }
+  } else if (n === 'scan') {
+    const sc = Math.max(1, H / 360); ctx.globalAlpha = a * k * .75; ctx.scale(sc, sc);
+    ctx.fillStyle = getPat('scan', SCAN); ctx.fillRect(0, 0, W / sc, H / sc);
+  } else if (n === 'leak') {
+    const p = .5 + .5 * Math.sin(t * .9), gx = W * (.1 + .8 * p), gy = -H * .1;
+    const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, H * 1.0);
+    g.addColorStop(0, 'rgba(255,190,70,.95)'); g.addColorStop(.45, 'rgba(255,60,90,.45)'); g.addColorStop(1, 'rgba(255,60,90,0)');
+    ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a * k * (.55 + .45 * Math.sin(t * 2.3 + 1)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  } else if (n === 'snow') {
+    ctx.fillStyle = '#fff'; const cnt = Math.floor(30 + 90 * k);
+    for (let i = 0; i < cnt; i++) {
+      const rr = rng(i * 131 + 7), sp = .04 + rr() * .08;
+      const x = (((rr() + Math.sin(t * .6 + i) * .015) % 1) + 1) % 1 * W, y = ((rr() + t * sp) % 1) * H, rad = (1 + rr() * 3) * s * 1.6;
+      ctx.globalAlpha = a * (.4 + rr() * .5); ctx.beginPath(); ctx.arc(x, y, rad, 0, 7); ctx.fill();
+    }
+  } else if (n === 'rain') {
+    ctx.strokeStyle = 'rgba(200,220,255,.6)'; ctx.lineWidth = Math.max(1, s); const cnt = Math.floor(40 + 120 * k);
+    for (let i = 0; i < cnt; i++) {
+      const rr = rng(i * 173 + 5), x = rr() * W, y = ((rr() + t * (1.2 + rr())) % 1) * H, len = H * (.03 + rr() * .04);
+      ctx.globalAlpha = a * (.3 + rr() * .5); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - len * .25, y + len); ctx.stroke();
+    }
+  } else if (n === 'star') {
+    ctx.globalCompositeOperation = 'screen'; ctx.strokeStyle = '#fff'; ctx.lineWidth = Math.max(1, s * 1.2);
+    for (let i = 0; i < 24; i++) {
+      const rr = rng(i * 53 + 11), x = rr() * W, y = rr() * H, sz = H * (.01 + rr() * .03) * (.5 + .5 * Math.sin(t * (1.5 + rr() * 2) + i * 3));
+      ctx.globalAlpha = a * k * clamp(sz / (H * .03), 0, 1);
+      ctx.beginPath(); ctx.moveTo(x - sz, y); ctx.lineTo(x + sz, y); ctx.moveTo(x, y - sz); ctx.lineTo(x, y + sz); ctx.moveTo(x - sz * .5, y - sz * .5); ctx.lineTo(x + sz * .5, y + sz * .5); ctx.moveTo(x + sz * .5, y - sz * .5); ctx.lineTo(x - sz * .5, y + sz * .5); ctx.stroke();
+    }
+  } else if (n === 'flare') {
+    ctx.globalCompositeOperation = 'screen';
+    const p = .5 + .5 * Math.sin(t * .7), gx = W * (.15 + .7 * p), gy = H * .22;
+    const gr = ctx.createRadialGradient(gx, gy, 0, gx, gy, H * .35);
+    gr.addColorStop(0, 'rgba(255,255,230,1)'); gr.addColorStop(.2, 'rgba(255,210,120,.5)'); gr.addColorStop(1, 'rgba(255,150,60,0)');
+    ctx.globalAlpha = a * k; ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+    [.35, .6, .85, 1.2].forEach((f, i) => {
+      const x = gx + (W / 2 - gx) * f * 1.6, y = gy + (H / 2 - gy) * f * 1.6, r = H * (.03 + .03 * i);
+      const g2c = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g2c.addColorStop(0, `rgba(${i % 2 ? 120 : 255},${i % 2 ? 200 : 160},${i % 2 ? 255 : 90},.4)`); g2c.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g2c; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    });
+  } else if (n === 'bokeh') {
+    ctx.globalCompositeOperation = 'screen';
+    for (let i = 0; i < 16; i++) {
+      const rr = rng(i * 977 + 3), x = ((rr() + t * .01 * (rr() + .2)) % 1) * W, y = ((rr() + t * .006 * (rr() + .2)) % 1) * H, rad = H * (.02 + rr() * .06);
+      const al = Math.min(1, (.15 + rr() * .35) * k * a * (.6 + .4 * Math.sin(t * (.5 + rr()) + i)));
+      const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+      g.addColorStop(0, `rgba(255,${200 + rr() * 55 | 0},${150 + rr() * 80 | 0},${al})`); g.addColorStop(1, 'rgba(255,200,150,0)');
+      ctx.fillStyle = g; ctx.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+    }
+  }
+  if (n === 'vhs') {
+    ctx.globalCompositeOperation = 'source-over';
+    const sc = Math.max(1, H / 360); ctx.save(); ctx.globalAlpha = a * k * .6; ctx.scale(sc, sc); ctx.fillStyle = getPat('scan', SCAN); ctx.fillRect(0, 0, W / sc, H / sc); ctx.restore();
+    const by = ((t * .2) % 1) * H * 1.2 - H * .1, bg = ctx.createLinearGradient(0, by, 0, by + H * .1);
+    bg.addColorStop(0, 'rgba(255,255,255,0)'); bg.addColorStop(.5, 'rgba(255,255,255,.14)'); bg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.globalAlpha = a * k; ctx.fillStyle = bg; ctx.fillRect(0, by, W, H * .1);
+    const cg = ctx.createLinearGradient(0, 0, W, 0);
+    cg.addColorStop(0, 'rgba(0,255,255,.18)'); cg.addColorStop(.5, 'rgba(0,0,0,0)'); cg.addColorStop(1, 'rgba(255,0,60,.18)');
+    ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = cg; ctx.fillRect(0, 0, W, H);
+  }
+  ctx.restore();
+}
+const KFKEYS = ['x', 'y', 'scale', 'rot', 'opacity'];
+const localT = c => state.cur - c.start;
+const pickKf = o => ({ x: o.x, y: o.y, scale: o.scale, rot: o.rot, opacity: o.opacity });
+function kfAt(c, lt) {
+  const k = c.kf; if (!k || !k.length) return null;
+  if (lt <= k[0].t) return k[0];
+  if (lt >= k[k.length - 1].t) return k[k.length - 1];
+  for (let i = 0; i < k.length - 1; i++) {
+    if (lt < k[i + 1].t) {
+      const a = k[i], b = k[i + 1]; let p = (lt - a.t) / (b.t - a.t); p = p * p * (3 - 2 * p);
+      const o = {}; KFKEYS.forEach(q => o[q] = a[q] + (b[q] - a[q]) * p); return o;
+    }
+  }
+  return k[k.length - 1];
+}
+function upsertKf(c, lt) {
+  lt = clamp(lt, 0, dur(c));
+  const ex = c.kf.find(q => Math.abs(q.t - lt) < .04), vals = pickKf(c);
+  if (ex) { Object.assign(ex, vals); return false; }
+  c.kf.push({ t: lt, ...vals }); c.kf.sort((a, b) => a.t - b.t); return true;
+}
+function toggleKf(c) {
+  const lt = clamp(localT(c), 0, dur(c)), i = c.kf.findIndex(q => Math.abs(q.t - lt) < .04);
+  if (i >= 0) { c.kf.splice(i, 1); toast('Anahtar kare silindi'); }
+  else { const cur = kfAt(c, lt); if (cur) KFKEYS.forEach(q => c[q] = cur[q]); upsertKf(c, lt); toast('Anahtar kare eklendi. Başka bir ana gidip boyut/konum değiştirin.', 3500); }
+  renderTimeline(); syncInspector(); dirty = true;
+}
+function applyAnim(e, type, p) {
+  const ep = 1 - Math.pow(1 - p, 3);
+  switch (type) {
+    case 'fade': e.alpha *= p; break;
+    case 'zoomin': e.sc *= .3 + .7 * ep; e.alpha *= Math.min(1, p * 2); break;
+    case 'zoomout': e.sc *= 1 + (1 - ep) * .8; e.alpha *= Math.min(1, p * 2); break;
+    case 'left': e.x -= (1 - ep) * 70; break;
+    case 'right': e.x += (1 - ep) * 70; break;
+    case 'up': e.y -= (1 - ep) * 70; break;
+    case 'down': e.y += (1 - ep) * 70; break;
+    case 'spin': e.rotAdd += (1 - ep) * -270; e.sc *= .2 + .8 * ep; e.alpha *= Math.min(1, p * 2); break;
+    case 'pop': { const c1 = 1.70158, c3 = c1 + 1, b = 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); e.sc *= Math.max(0, b); e.alpha *= Math.min(1, p * 4); break; }
+    case 'blur': e.blurAdd += (1 - p) * 24; e.alpha *= Math.min(1, .3 + p); break;
+    case 'type': e.reveal = Math.min(e.reveal, p); break;
+  }
+}
+function applyTrans(e, type, p) {
+  const ep = 1 - Math.pow(1 - p, 3);
+  switch (type) {
+    case 'dissolve': e.alpha *= p; break;
+    case 'slideL': e.x += (1 - ep) * 100; break;
+    case 'slideR': e.x -= (1 - ep) * 100; break;
+    case 'slideU': e.y += (1 - ep) * 100; break;
+    case 'slideD': e.y -= (1 - ep) * 100; break;
+    case 'zoom': e.sc *= 1 + (1 - ep) * 1.2; e.alpha *= p; break;
+    case 'spin': e.rotAdd += (1 - ep) * 90; e.sc *= .5 + .5 * ep; e.alpha *= p; break;
+    case 'wipe': e.wipe = p; break;
+    case 'flash': e.flashT = Math.sin(Math.PI * p); e.alpha *= p < .5 ? 0 : 1; break;
+    case 'glitch': e.glitch = Math.max(e.glitch, 90 * (1 - p)); e.rgb = Math.max(e.rgb, 70 * (1 - p)); e.alpha *= p > .1 ? 1 : 0; break;
+    case 'dip': e.alpha *= Math.max(0, 2 * p - 1); e.prevA = Math.max(0, 1 - 2 * p); break;
+  }
+}
+function animate(e, c, t) {
+  const lt = t - c.start, d = dur(c), ad = Math.max(.05, c.animDur || .6);
+  if (c.animIn && c.animIn !== 'none' && lt < ad) applyAnim(e, c.animIn, clamp(lt / ad, 0, 1));
+  if (c.animOut && c.animOut !== 'none' && d - lt < ad) applyAnim(e, c.animOut, clamp((d - lt) / ad, 0, 1));
+}
+function findPrev(c) {
+  let best = null;
+  state.clips.forEach(o => {
+    if (o === c || !isVisual(o) || o.start >= c.start) return;
+    const en = endOf(o);
+    if (Math.abs(en - c.start) < .15 || en > c.start) { if (!best || en > endOf(best)) best = o; }
+  });
+  return best;
+}
+const needsAdv = e => e.glitch > 0 || e.rgb > 0 || e.pixel > 0 || e.zoomBlur > 0 || e.fan > 0 || e.chroma || e.posterize > 0 || e.wave > 0 || e.tile;
+function overlayFx(c, t, a) {
+  if (c.cinematic > 0) cinematicFx(c.cinematic / 100, a);
+  const O = (op, al, col) => { ctx.save(); ctx.globalCompositeOperation = op; ctx.globalAlpha = clamp(al, 0, 1); ctx.fillStyle = col; ctx.fillRect(0, 0, W, H); ctx.restore(); };
+  if (c.temp) O('overlay', a * Math.abs(c.temp) / 100 * .5, c.temp > 0 ? '#ff9a2e' : '#2e8bff');
+  if (c.tint) O('overlay', a * Math.abs(c.tint) / 100 * .4, c.tint > 0 ? '#ff3cc8' : '#3cdc5a');
+  if (c.fade > 0) O('screen', a * c.fade / 100 * .35, '#b0b4c0');
+  if (c.disco > 0) O('overlay', a * c.disco / 100 * (.45 + .35 * Math.sin(t * 9)), `hsl(${(t * 200) % 360},100%,50%)`);
+  if (c.glow > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = clamp(a * c.glow / 100 * .9, 0, 1); ctx.filter = `blur(${Math.round(W / 90)}px) brightness(1.25)`; ctx.drawImage(cv, 0, 0); ctx.restore(); }
+  if (c.vignette > 0) vignetteFx(c.vignette / 100, a);
+  if (c.flash > 0) { const p = Math.pow(Math.max(0, Math.sin(2 * Math.PI * 2 * (t - c.start))), 10); if (p > .01) O('source-over', a * p * c.flash / 100, '#fff'); }
+  if (c.flashT > 0) O('source-over', c.flashT, '#fff');
+  if (c.tex && c.tex !== 'none') textureFx(c.tex, c.texAmt / 100, t, a);
+}
+function drawVisual(c, t, opt) {
+  opt = opt || {};
+  const el = c.el;
+  const vw = el.videoWidth || el.naturalWidth, vh = el.videoHeight || el.naturalHeight;
+  if (!vw || !vh) return;
+  const lt = t - c.start;
+  const e = Object.assign({}, c, { alpha: opt.alphaMul == null ? 1 : opt.alphaMul, sc: 1, rotAdd: 0, blurAdd: 0, wipe: 1, flashT: 0, prevA: 1 });
+  const kv = kfAt(c, lt); if (kv) KFKEYS.forEach(k => e[k] = kv[k]);
+  if (!opt.frozen) animate(e, c, t);
+  let prev = null;
+  if (!opt.skipTrans && c.trans && c.trans !== 'none' && lt < c.transDur) { prev = findPrev(c); applyTrans(e, c.trans, clamp(lt / c.transDur, 0, 1)); }
+  const q = srcRect(e, vw, vh), base = Math.min(W / q.sw, H / q.sh) * e.scale / 100, w = q.sw * base, h = q.sh * base;
+  const cx = W / 2 + e.x / 100 * W, cy = H / 2 + e.y / 100 * H;
+  const a = e.opacity / 100 * (opt.frozen ? 1 : fadeMul(c, t)) * e.alpha;
+  if (!opt.skipTrans) c._bb = { x: cx - w / 2, y: cy - h / 2, w, h };
+  if (prev && t >= endOf(prev)) { state.need.add(prev); drawVisual(prev, endOf(prev) - .001, { skipTrans: true, frozen: true, alphaMul: e.prevA }); }
+  if (c.kind === 'video' && el.readyState < 2) return;
+  ctx.save();
+  if (e.wipe < 1) { ctx.beginPath(); ctx.rect(0, 0, W * e.wipe, H); ctx.clip(); }
+  if (e.bgBlur) {
+    const cs = Math.max(W / vw, H / vh) * 1.12;
+    ctx.save(); ctx.globalAlpha = a; ctx.filter = `blur(${Math.round(W / 45)}px) brightness(.65)`; ctx.drawImage(el, W / 2 - vw * cs / 2, H / 2 - vh * cs / 2, vw * cs, vh * cs); ctx.restore();
+  }
+  if (needsAdv(e)) {
+    ensureTmp(); g1.setTransform(1, 0, 0, 1, 0, 0); g1.globalAlpha = 1; g1.globalCompositeOperation = 'source-over'; g1.clearRect(0, 0, W, H);
+    paint(g1, e, t, 1); advFx(e, t);
+    ctx.globalAlpha = clamp(a, 0, 1); if (e.blend && e.blend !== 'source-over') ctx.globalCompositeOperation = e.blend;
+    ctx.drawImage(tmp, 0, 0);
+  } else paint(ctx, e, t, clamp(a, 0, 1));
+  ctx.restore();
+  overlayFx(e, t, clamp(a, 0, 1));
+}
+function drawText(c, t) {
+  const e = Object.assign({}, c, { alpha: 1, sc: 1, rotAdd: 0, blurAdd: 0, reveal: 1 });
+  animate(e, c, t);
+  const a = clamp(e.opacity / 100 * fadeMul(c, t) * e.alpha, 0, 1), ts = c.size * K();
+  ctx.save();
+  ctx.globalAlpha = a;
+  if (e.blurAdd > 0) ctx.filter = `blur(${e.blurAdd * K()}px)`;
+  const font = `${c.bold ? '700' : '400'} ${ts}px ${c.font}`;
+  ctx.font = font;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  let str = c.text || ' '; if (e.reveal < 1) str = str.slice(0, Math.floor(str.length * e.reveal));
+  const lines = str.split('\n'), lh = ts * 1.2;
+  const cx = e.x / 100 * W, cy = e.y / 100 * H, y0 = -(lines.length - 1) * lh / 2;
+  ctx.translate(cx, cy); ctx.rotate(e.rotAdd * Math.PI / 180); ctx.scale(e.sc, e.sc);
+  lines.forEach((l, i) => {
+    const y = y0 + i * lh;
+    if (c.shadow) { ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = ts * .15; ctx.shadowOffsetY = ts * .05; }
+    if (c.outline) { ctx.lineWidth = Math.max(2, ts * .12); ctx.strokeStyle = '#000'; ctx.strokeText(l, 0, y); }
+    ctx.fillStyle = c.color; ctx.fillText(l, 0, y);
+  });
+  ctx.restore();
+  const fl = (c.text || ' ').split('\n'); ctx.save(); ctx.font = font;
+  let fw = 0; fl.forEach(l => fw = Math.max(fw, ctx.measureText(l).width)); ctx.restore();
+  c._bb = { x: cx - fw / 2 - 8, y: cy - fl.length * lh / 2, w: fw + 16, h: fl.length * lh };
+}
+const WM_IMG = new Image(); WM_IMG.src = document.querySelector('#logo img').src;
+function watermarkFx() {
+  const u = Math.min(W, H), ls = Math.round(u * .06), m = Math.round(u * .03), fs = Math.round(u * .04);
+  ctx.save(); ctx.globalAlpha = .88; ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over';
+  ctx.font = `800 ${fs}px system-ui,-apple-system,"Segoe UI",sans-serif`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  const tw = ctx.measureText('ClipForge').width, gap = Math.round(ls * .3);
+  const x0 = W - m - tw - gap - ls, y0 = H - m - ls;
+  const pd = Math.round(ls * .2); ctx.save(); ctx.globalAlpha = .45; ctx.fillStyle = '#000'; rrect(ctx, x0 - pd, y0 - pd, W - m - x0 + pd * 2, ls + pd * 2, (ls + pd * 2) * .3); ctx.fill(); ctx.restore();
+  if (WM_IMG.complete && WM_IMG.naturalWidth) {
+    ctx.save(); rrect(ctx, x0, y0, ls, ls, ls * .24); ctx.clip(); ctx.drawImage(WM_IMG, x0, y0, ls, ls); ctx.restore();
+  }
+  ctx.shadowColor = 'rgba(0,0,0,.75)'; ctx.shadowBlur = fs * .3; ctx.fillStyle = '#fff';
+  ctx.fillText('ClipForge', W - m, y0 + ls / 2 + fs * .04);
+  ctx.restore();
+}
+function emptyHint() {
+  ctx.save(); ctx.fillStyle = '#6b6b76'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = `600 ${H * .04}px system-ui,sans-serif`; ctx.fillText('Başlamak için bir video yükleyin', W / 2, H / 2 - H * .03);
+  ctx.font = `${H * .028}px system-ui,sans-serif`; ctx.fillStyle = '#4b4b55'; ctx.fillText('(buraya tıklayın veya dosyayı sürükleyin)', W / 2, H / 2 + H * .04);
+  ctx.restore();
+}
+function draw() {
+  ctx.globalAlpha = 1; ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over'; ctx.setLineDash([]);
+  ctx.fillStyle = state.bg; ctx.fillRect(0, 0, W, H);
+  state.need = new Set();
+  const t = state.cur, act = activeAt(t);
+  act.filter(isVisual).sort((a, b) => ((a.layer === 'over') - (b.layer === 'over')) || (a.start - b.start)).forEach(c => drawVisual(c, t));
+  act.filter(c => c.kind === 'text').forEach(c => drawText(c, t));
+  if ((state.exporting || state.shot) && state.clips.length) watermarkFx();
+  if (!state.clips.length && !state.exporting) emptyHint();
+  const s = getSel();
+  if (!state.exporting && s && s._bb && s.kind !== 'audio' && t >= s.start && t < endOf(s)) {
+    ctx.save(); ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = Math.max(2, W / 500); ctx.setLineDash([10, 6]);
+    ctx.strokeRect(s._bb.x, s._bb.y, s._bb.w, s._bb.h); ctx.restore();
+  }
+}
+
+/* ---------- Oynatma & senkron ---------- */
+const CURVE_FN = {
+  montage: u => .35 + 1.7 * Math.sin(Math.PI * u),
+  hero: u => 1.7 - 1.45 * Math.exp(-Math.pow((u - .5) / .14, 2)),
+  bullet: u => 1.9 - 1.75 * Math.exp(-Math.pow((u - .5) / .09, 2)),
+  jump: u => (Math.floor(u * 4) % 2 === 0) ? .4 : 1.6,
+  flashin: u => .3 + 1.7 * u * u,
+  flashout: u => .3 + 1.7 * (1 - u) * (1 - u)
+};
+const CURVE_G = {};
+for (const k in CURVE_FN) { const N = 200, g = [0]; let sum = 0; for (let i = 1; i <= N; i++) { sum += CURVE_FN[k]((i - .5) / N) / N; g.push(sum); } CURVE_G[k] = { g: g.map(v => v / sum), S: sum }; }
+const mapG = (k, u) => { u = clamp(u, 0, 1); const g = CURVE_G[k].g, N = g.length - 1, x = u * N, i = Math.min(N - 1, Math.floor(x)); return g[i] + (g[i + 1] - g[i]) * (x - i); };
+const curveRate = (k, u) => CURVE_FN[k](clamp(u, 0, 1)) / CURVE_G[k].S;
+const hasCurve = c => c.curve && c.curve !== 'none' && CURVE_FN[c.curve];
+function srcPos(c, t) {
+  const d = dur(c), u = (t - c.start) / d;
+  let p = hasCurve(c) ? c.srcIn + (c.srcOut - c.srcIn) * mapG(c.curve, u) : c.srcIn + (t - c.start) * c.speed;
+  if (c.reverse) p = c.srcOut - (p - c.srcIn);
+  return clamp(p, 0, c.mediaDur || 1e9);
+}
+function volOf(c, t) { if (c.mute || state.trackMute[trackOf(c)] || state.masterMute) return 0; return c.volume / 100 * state.master * fadeMul(c, t); }
+function syncMedia() {
+  const t = state.cur;
+  for (const c of state.clips) {
+    if (!isMedia(c)) continue;
+    const el = c.el, d = dur(c), active = t >= c.start && t < c.start + d;
+    if (active) {
+      const want = srcPos(c, t), u = (t - c.start) / d;
+      el.volume = clamp(volOf(c, t), 0, 1);
+      if (c.reverse) {
+        el.volume = 0; if (!el.paused) el.pause();
+        if (Math.abs(el.currentTime - want) > .03) el.currentTime = want;
+        continue;
+      }
+      if (state.playing) {
+        const rate = hasCurve(c) ? clamp((c.srcOut - c.srcIn) / d * curveRate(c.curve, u), .0625, 16) : c.speed;
+        if (Math.abs(el.playbackRate - rate) > .03) el.playbackRate = rate;
+        if (el.paused) { if (Math.abs(el.currentTime - want) > .05) el.currentTime = want; el.play().catch(() => {}); }
+        else if (Math.abs(el.currentTime - want) > (hasCurve(c) ? .3 : .4)) el.currentTime = want;
+      } else {
+        if (!el.paused) el.pause();
+        if (Math.abs(el.currentTime - want) > .04) el.currentTime = want;
+      }
+    } else {
+      if (!el.paused) el.pause();
+      if (state.need && state.need.has(c)) {
+        const w = Math.max(c.srcIn, c.srcOut - .04);
+        if (Math.abs(el.currentTime - w) > .08) el.currentTime = w;
+      } else if (state.playing && c.start > t && c.start - t < .7) {
+        const w = srcPos(c, c.start);
+        if (Math.abs(el.currentTime - w) > .05) el.currentTime = w;
+      }
+    }
+  }
+}
+function play() {
+  if (!total()) { toast('Önce bir video veya görsel yükleyin'); return; }
+  if (state.cur >= total() - .05) state.cur = 0;
+  state.playing = true; playStartWall = performance.now(); playStartT = state.cur; dirty = true; setPlayIcon();
+}
+function stopPlay() { state.playing = false; dirty = true; setPlayIcon(); }
+function togglePlay() { state.playing ? stopPlay() : play(); }
+function seekTo(t) {
+  state.cur = clamp(t, 0, Math.max(0, total() - .001));
+  if (state.playing) { playStartWall = performance.now(); playStartT = state.cur; }
+  dirty = true;
+}
+let lastIcon = '';
+function setPlayIcon() {
+  const n = state.playing ? 'pause' : 'play';
+  if (n !== lastIcon) { $('#btnPlay').innerHTML = ic(n, 22); lastIcon = n; }
+}
+function loop() {
+  if (state.playing) {
+    const t = playStartT + (performance.now() - playStartWall) / 1000, tot = total();
+    if (t >= tot) {
+      state.cur = Math.max(0, tot - .01); stopPlay();
+      if (state.onEnd) state.onEnd();
+    } else state.cur = t;
+    dirty = true;
+  }
+  if (dirty) { dirty = false; draw(); syncMedia(); updateUI(); }
+  requestAnimationFrame(loop);
+}
+function updateUI() {
+  const tot = total();
+  $('#tcur').textContent = fmt(state.cur); $('#ttot').textContent = fmt(tot);
+  const x = state.cur * state.pps;
+  $('#playhead').style.left = x + 'px';
+  if (state.playing) {
+    const sc = $('#tlScroll');
+    if (x > sc.scrollLeft + sc.clientWidth - 30) sc.scrollLeft = x - 60;
+    else if (x < sc.scrollLeft) sc.scrollLeft = Math.max(0, x - 30);
+  }
+  if (!seeking) $('#seek').value = tot ? state.cur / tot * 1000 : 0;
+  setPlayIcon();
+  const ss = getSel(); if (ss && ss.kf && ss.kf.length) syncInspector();
+}
+
+/* ---------- Seçim & Zaman çizelgesi ---------- */
+function select(id) {
+  state.sel = id;
+  $$('.clip').forEach(e => e.classList.toggle('sel', e.dataset.id === id));
+  renderInspector(); updateSideTabs(); dirty = true;
+}
+function place(c, el) {
+  el.style.left = c.start * state.pps + 'px';
+  el.style.width = Math.max(8, dur(c) * state.pps) + 'px';
+}
+function renderRuler(width) {
+  const steps = [.1, .2, .5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600];
+  const step = steps.find(s => s * state.pps >= 80) || 600;
+  let h = '';
+  for (let i = 0; i * step * state.pps < width; i++) h += `<div class="tick" style="left:${i * step * state.pps}px"><span>${fmt(i * step, step < 1)}</span></div>`;
+  const r = $('#ruler'); r.innerHTML = h;
+  r.style.backgroundSize = (step * state.pps / 5) + 'px 8px';
+}
+const KIND_IC = { video: 'film', image: 'film', text: 'type', audio: 'music' };
+function renderTimeline() {
+  const sc = $('#tlScroll'), tot = total();
+  const width = Math.max(tot + 15, sc.clientWidth / state.pps + 2) * state.pps;
+  $('#tlContent').style.width = width + 'px';
+  renderRuler(width);
+  ['v', 'o', 't', 'a'].forEach(k => $('#trk-' + k).innerHTML = '');
+  state.clips.forEach(c => {
+    const el = document.createElement('div');
+    el.className = `clip k-${c.kind}` + (c.id === state.sel ? ' sel' : '');
+    el.dataset.id = c.id;
+    const sp = isMedia(c) && c.speed !== 1 ? ` · ${c.speed}x` : '';
+    const kfm = (c.kf || []).map(k => `<b class="kfm" style="left:${k.t * state.pps}px"></b>`).join('');
+    el.innerHTML = `<i class="h l"></i><span class="lbl">${c.mute ? '🔇 ' : ''}${c.layer === 'over' ? '▣ ' : ''}${esc(c.name)}${sp}</span>${kfm}<i class="h r"></i>`;
+    place(c, el);
+    $('#trk-' + trackOf(c)).appendChild(el);
+    if (c.kind === 'audio' && c.url) drawWave(c, el);
+  });
+  $('#beats').innerHTML = state.beats.map(b => `<i class="beatline" style="left:${b * state.pps}px"></i>`).join('');
+  $('#tlinfo').textContent = state.clips.length ? `${state.clips.length} klip · toplam ${fmt(tot)}` : 'Klip yok — bir dosya yükleyin';
+  dirty = true;
+}
+const WAVE = {};
+function getWave(url) {
+  if (WAVE[url]) return WAVE[url];
+  return WAVE[url] = (async () => {
+    const ab = await (await fetch(url)).arrayBuffer();
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = await ac.decodeAudioData(ab); try { ac.close(); } catch (e) {}
+    const ch = buf.getChannelData(0), step = Math.max(1, Math.floor(buf.sampleRate * .05)), n = Math.floor(ch.length / step), pk = new Float32Array(n);
+    for (let i = 0; i < n; i++) { let m = 0; for (let j = 0; j < step; j += 8) { const v = Math.abs(ch[i * step + j]); if (v > m) m = v; } pk[i] = m; }
+    return pk;
+  })().catch(() => null);
+}
+function drawWave(c, el) {
+  getWave(c.url).then(pk => {
+    if (!pk || !el.isConnected) return;
+    const w = Math.min(3000, Math.max(2, Math.round(dur(c) * state.pps))), h = 40, cw = document.createElement('canvas');
+    cw.className = 'wf'; cw.width = w; cw.height = h;
+    const g = cw.getContext('2d'); g.fillStyle = 'rgba(255,255,255,.6)';
+    for (let x = 0; x < w; x++) {
+      const t = (c.srcIn || 0) + (x / w) * dur(c) * (c.speed || 1), v = pk[Math.floor(t / .05)] || 0, bh = Math.max(1, Math.min(1, v * 1.4) * h * .9);
+      g.fillRect(x, (h - bh) / 2, 1, bh);
+    }
+    el.insertBefore(cw, el.firstChild);
+  });
+}
+function snap(ns, c) {
+  const th = 8 / state.pps, d = dur(c), tg = [0, state.cur];
+  state.clips.forEach(o => { if (o !== c && trackOf(o) === trackOf(c)) tg.push(o.start, endOf(o)); });
+  let best = ns, bd = th;
+  tg.forEach(x => {
+    if (Math.abs(ns - x) < bd) { best = x; bd = Math.abs(ns - x); }
+    if (Math.abs(ns + d - x) < bd) { best = x - d; bd = Math.abs(ns + d - x); }
+  });
+  return Math.max(0, best);
+}
+let tdrag = null, phDrag = false;
+const tlc = $('#tlContent');
+tlc.addEventListener('pointerdown', e => {
+  const ce = e.target.closest('.clip');
+  if (ce) {
+    const c = byId(ce.dataset.id); select(c.id);
+    const mode = e.target.classList.contains('l') ? 'l' : e.target.classList.contains('r') ? 'r' : 'm';
+    tdrag = { mode, c, el: ce, sx: e.clientX, start: c.start, srcIn: c.srcIn, dur: dur(c) };
+    e.preventDefault(); return;
+  }
+  phDrag = true;
+  seekTo((e.clientX - tlc.getBoundingClientRect().left) / state.pps);
+  if (!e.target.closest('#ruler')) select(null);
+});
+window.addEventListener('pointermove', e => {
+  if (phDrag) { seekTo((e.clientX - tlc.getBoundingClientRect().left) / state.pps); return; }
+  if (!tdrag) return;
+  const c = tdrag.c, dx = (e.clientX - tdrag.sx) / state.pps;
+  if (tdrag.mode === 'm') c.start = snap(Math.max(0, tdrag.start + dx), c);
+  else if (tdrag.mode === 'l') {
+    let d = Math.max(dx, -tdrag.start); d = Math.min(d, tdrag.dur - .1);
+    if (isMedia(c)) { d = Math.max(d, -tdrag.srcIn / c.speed); c.srcIn = tdrag.srcIn + d * c.speed; }
+    else c.dur = tdrag.dur - d;
+    c.start = tdrag.start + d;
+  } else {
+    let nd = Math.max(.1, tdrag.dur + dx);
+    if (isMedia(c)) { nd = Math.min(nd, (c.mediaDur - c.srcIn) / c.speed); c.srcOut = c.srcIn + nd * c.speed; }
+    else c.dur = nd;
+  }
+  place(c, tdrag.el); dirty = true;
+});
+window.addEventListener('pointerup', () => {
+  phDrag = false;
+  if (tdrag) { tdrag = null; renderTimeline(); syncInspector(); commit(); }
+});
+$('#zoom').addEventListener('input', e => {
+  state.pps = +e.target.value; renderTimeline();
+  const sc = $('#tlScroll'); sc.scrollLeft = Math.max(0, state.cur * state.pps - sc.clientWidth / 2);
+});
+$('#tlScroll').addEventListener('wheel', e => {
+  if (!e.ctrlKey) return;
+  e.preventDefault();
+  state.pps = clamp(state.pps * (e.deltaY < 0 ? 1.15 : 1 / 1.15), 10, 240);
+  $('#zoom').value = state.pps; renderTimeline();
+}, { passive: false });
+
+/* ---------- Kes / Sil ---------- */
+function cloneClip(c) {
+  const n = Object.assign({}, c, { id: nid(), src: null, _bb: null });
+  if (c.kf) n.kf = c.kf.map(k => ({ ...k }));
+  if (c.url) n.el = makeEl(c.url, c.kind);
+  return n;
+}
+function splitOne(c, t) {
+  const d = t - c.start;
+  if (d < .05 || dur(c) - d < .05) return null;
+  const n = cloneClip(c);
+  if (isMedia(c)) {
+    const sp = srcPos(c, t);
+    if (c.reverse) { n.srcIn = c.srcIn; n.srcOut = sp; c.srcIn = sp; }
+    else { n.srcIn = sp; c.srcOut = sp; }
+    c.curve = 'none'; n.curve = 'none';
+  } else { n.dur = c.dur - d; c.dur = d; }
+  if (c.kf && c.kf.length) {
+    const at = kfAt(c, d), kf = c.kf;
+    n.kf = kf.filter(k => k.t > d).map(k => ({ ...k, t: k.t - d })); c.kf = kf.filter(k => k.t < d);
+    if (at) { n.kf.unshift({ t: 0, ...pickKf(at) }); c.kf.push({ t: d, ...pickKf(at) }); }
+  }
+  n.start = t; n.fadeIn = 0; c.fadeOut = 0; n.animIn = 'none'; n.trans = 'none'; c.animOut = 'none';
+  state.clips.push(n);
+  return n;
+}
+function freezeFrame() {
+  const t = state.cur;
+  let c = getSel();
+  if (!c || c.kind !== 'video') c = activeAt(t).filter(x => x.kind === 'video').pop();
+  if (!c || !(t > c.start + .05 && t < endOf(c) - .05)) { toast('Oynatma çubuğunu bir video klibinin içine getirin'); return; }
+  const el = c.el; if (!el.videoWidth || el.readyState < 2) { toast('Kare hazır değil, tekrar deneyin'); return; }
+  const cc = document.createElement('canvas'); cc.width = el.videoWidth; cc.height = el.videoHeight;
+  cc.getContext('2d').drawImage(el, 0, 0);
+  let url; try { url = cc.toDataURL('image/jpeg', .92); } catch (e) { toast('Kare alınamadı'); return; }
+  const props = { ...c }; const FD = 2;
+  const n = splitOne(c, t); if (!n) { toast('Dondurulamadı'); return; }
+  state.clips.forEach(o => { if (trackOf(o) === 'v' && o !== c && o.start >= t - 1e-6) o.start += FD; });
+  const f = Object.assign({}, props, { id: nid(), kind: 'image', name: 'Dondurulmuş kare', start: t, dur: FD, url, el: makeEl(url, 'image'), src: null, _bb: null, kf: [], animIn: 'none', animOut: 'none', trans: 'none', curve: 'none', reverse: false, fadeIn: 0, fadeOut: 0, speed: 1 });
+  state.clips.push(f);
+  renderTimeline(); select(f.id); commit(); toast('Kare donduruldu (2 sn)');
+}
+function splitAt() {
+  const t = state.cur, s = getSel();
+  let made = null;
+  if (s) {
+    if (!(t > s.start && t < endOf(s))) { toast('Oynatma çubuğunu seçili klibin üzerine getirin'); return; }
+    made = splitOne(s, t);
+  } else {
+    const list = activeAt(t);
+    if (!list.length) { toast('Oynatma çubuğunu bir klibin üzerine getirin'); return; }
+    list.forEach(c => { const n = splitOne(c, t); if (n) made = n; });
+  }
+  if (!made) { toast('Bölme noktası klibin kenarına çok yakın'); return; }
+  renderTimeline(); select(s ? s.id : null); commit(); toast('Klip bölündü');
+}
+function delSel() {
+  const c = getSel();
+  if (!c) { toast('Silmek için bir klip seçin'); return; }
+  if (c.el && c.el.pause) c.el.pause();
+  state.clips = state.clips.filter(x => x !== c);
+  state.sel = null; renderTimeline(); renderInspector(); seekTo(state.cur); dirty = true; commit();
+}
+
+/* ---------- Geçmiş (geri al / yinele) ---------- */
+const hist = { list: [], i: -1 };
+const copyClip = c => ({ ...c, kf: c.kf ? c.kf.map(k => ({ ...k })) : c.kf });
+const serial = () => JSON.stringify(state.clips, (k, v) => (k === 'el' || k === 'src' || k === '_bb') ? undefined : v);
+function commit() {
+  const sj = serial();
+  if (hist.list[hist.i] && hist.list[hist.i].s === sj) return;
+  hist.list = hist.list.slice(0, hist.i + 1);
+  hist.list.push({ s: sj, clips: state.clips.map(copyClip) });
+  if (hist.list.length > 80) hist.list.shift();
+  hist.i = hist.list.length - 1;
+  scheduleSave();
+}
+function restoreHist(i) {
+  const h = hist.list[i]; if (!h) return;
+  hist.i = i; state.clips = h.clips.map(copyClip);
+  if (!state.clips.some(c => c.id === state.sel)) state.sel = null;
+  renderTimeline(); renderInspector(); seekTo(state.cur); dirty = true;
+}
+function undo() { if (hist.i > 0) { restoreHist(hist.i - 1); toast('Geri alındı'); } else toast('Geri alınacak işlem yok'); }
+function redo() { if (hist.i < hist.list.length - 1) { restoreHist(hist.i + 1); toast('Yinelendi'); } else toast('Yinelenecek işlem yok'); }
+
+/* ---------- Çoğalt / Kırp / Katman / Ses ---------- */
+function duplicateSel() {
+  const c = getSel(); if (!c) { toast('Çoğaltmak için bir klip seçin'); return; }
+  const n = cloneClip(c); n.start = endOf(c); n.kf = (c.kf || []).map(k => ({ ...k }));
+  state.clips.push(n); renderTimeline(); select(n.id); commit(); toast('Klip çoğaltıldı');
+}
+function rippleAfter(c, from, delta) {
+  state.clips.forEach(o => { if (o !== c && trackOf(o) === trackOf(c) && o.start >= from - .001) o.start = Math.max(0, o.start + delta); });
+}
+function trimEdge(which) {
+  const c = getSel(), t = state.cur;
+  if (!c) { toast('Önce bir klip seçin'); return; }
+  if (!(t > c.start + .05 && t < endOf(c) - .05)) { toast('Oynatma çubuğunu seçili klibin içine getirin'); return; }
+  if (isMedia(c) && (hasCurve(c) || c.reverse)) { toast('Hız eğrisi/ters çevirme açıkken kırpılamaz'); return; }
+  const oe = endOf(c);
+  if (which === 'start') {
+    const d = t - c.start;
+    if (isMedia(c)) c.srcIn += d * c.speed; else c.dur -= d;
+    (c.kf || []).forEach(k => k.t = Math.max(0, k.t - d));
+    rippleAfter(c, oe, -d);
+    renderTimeline(); seekTo(c.start); toast('Baş kırpıldı');
+  } else {
+    const d = oe - t;
+    if (isMedia(c)) c.srcOut -= d * c.speed; else c.dur -= d;
+    rippleAfter(c, oe, -d);
+    renderTimeline(); toast('Son kırpıldı');
+  }
+  syncInspector(); commit();
+}
+function applyCrop(c, spec) {
+  c.cropL = c.cropR = c.cropT = c.cropB = 0;
+  if (spec !== '0') {
+    const [a, b] = spec.split(':').map(Number), R = a / b, el = c.el;
+    const vw = el.videoWidth || el.naturalWidth, vh = el.videoHeight || el.naturalHeight, r0 = vw / vh;
+    if (R < r0) { const f = R / r0; c.cropL = c.cropR = (1 - f) / 2 * 100; } else { const f = r0 / R; c.cropT = c.cropB = (1 - f) / 2 * 100; }
+  }
+  syncInspector(); dirty = true; commit();
+}
+function setLayer(c) {
+  if (c.layer === 'over') { c.layer = 'main'; if (c.scale === 40) { c.scale = 100; c.x = 0; c.y = 0; } }
+  else { c.layer = 'over'; if (c.scale === 100 && !c.x && !c.y) { c.scale = 40; c.x = 28; c.y = -26; } }
+  renderTimeline(); renderInspector(); commit(); toast(c.layer === 'over' ? 'Bindirme katmanına taşındı' : 'Ana videoya taşındı');
+}
+function extractAudio(c) {
+  if (c.kind !== 'video') return;
+  const n = Object.assign(DEF_VIS(), { id: nid(), kind: 'audio', name: '♪ ' + c.name, url: c.url, volume: c.volume, speed: c.speed, start: c.start, srcIn: c.srcIn, srcOut: c.srcOut, mediaDur: c.mediaDur });
+  n.el = makeEl(c.url, 'audio'); c.mute = true;
+  state.clips.push(n); renderTimeline(); select(n.id); commit(); toast('Ses ayrı katmana çıkarıldı');
+}
+function toggleMuteSel() {
+  const c = getSel();
+  if (!c || !isMedia(c)) { toast('Ses için bir video veya ses klibi seçin'); return; }
+  c.mute = !c.mute; renderTimeline(); syncInspector(); dirty = true; commit(); toast(c.mute ? 'Klip sesi kapatıldı' : 'Klip sesi açıldı');
+}
+
+/* ---------- Ritim ---------- */
+function bpmText() { return state.beats.length ? `${state.beats.length} işaret${state.bpm ? ' · yaklaşık ' + state.bpm + ' BPM' : ''}` : 'Henüz ritim işareti yok'; }
+function setBeats(list) {
+  state.beats = [...list].sort((a, b) => a - b);
+  const iv = []; for (let i = 1; i < state.beats.length; i++) iv.push(state.beats[i] - state.beats[i - 1]);
+  iv.sort((a, b) => a - b); const m = iv.length ? iv[Math.floor(iv.length / 2)] : 0;
+  state.bpm = m > .2 ? Math.round(60 / m) : 0;
+  $('#bpmInfo').textContent = bpmText(); renderTimeline(); scheduleSave();
+}
+function addBeat() { setBeats([...state.beats, state.cur]); toast('Ritim işareti eklendi'); }
+async function analyzeBeats() {
+  const c = target(['audio', 'video']); if (!c) return;
+  toast('Ritim analiz ediliyor…', 60000);
+  try {
+    const ab = await (await fetch(c.url)).arrayBuffer();
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = await ac.decodeAudioData(ab); try { ac.close(); } catch (e) {}
+    const sr = buf.sampleRate, ch = buf.getChannelData(0), hop = Math.floor(sr * .01), win = hop * 2, en = [];
+    for (let i = 0; i + win < ch.length; i += hop) { let sum = 0; for (let j = 0; j < win; j += 2) sum += ch[i + j] * ch[i + j]; en.push(Math.sqrt(sum / (win / 2))); }
+    const flux = en.map((v, i) => i ? Math.max(0, v - en[i - 1]) : 0);
+    const pre = [0]; flux.forEach(v => pre.push(pre[pre.length - 1] + v));
+    const R = 100, out = []; let last = -1;
+    for (let i = 1; i < flux.length - 1; i++) {
+      const a = Math.max(0, i - R), b = Math.min(flux.length, i + R), mean = (pre[b] - pre[a]) / (b - a);
+      const tt = i * .01;
+      if (flux[i] > mean * 1.6 + 1e-5 && flux[i] >= flux[i - 1] && flux[i] >= flux[i + 1] && tt - last > .28) { out.push(tt); last = tt; }
+    }
+    const mapped = out.filter(b => b >= c.srcIn && b <= c.srcOut).map(b => c.start + (b - c.srcIn) / c.speed);
+    if (mapped.length < 4) { toast('Belirgin ritim bulunamadı. Elle işaretleyebilirsiniz (B).', 4500); return; }
+    setBeats(mapped); toast('Ritim bulundu: ' + bpmText(), 3500);
+  } catch (e) { console.error(e); toast('Bu dosyanın sesi çözülemedi, ritim bulunamadı', 4500); }
+}
+function cutOnBeats() {
+  if (!requirePro('Ritme göre otomatik kesme')) return;
+  const c = target(['video', 'image']); if (!c) return;
+  if (!state.beats.length) { toast('Önce ritmi analiz edin veya işaretleyin'); return; }
+  const N = +$('#beatN').value, bs = state.beats.filter((b, i) => i % N === 0 && b > c.start + .15 && b < endOf(c) - .15);
+  let cur = c, cnt = 0;
+  for (const b of bs) { if (b > cur.start + .15 && b < endOf(cur) - .15) { const n = splitOne(cur, b); if (n) { cur = n; cnt++; } } }
+  renderTimeline(); commit(); toast(cnt ? (cnt + 1) + ' parçaya bölündü' : 'Bu klipte uygun ritim noktası yok');
+}
+function beatZoom() {
+  const c = target(['video', 'image']); if (!c) return;
+  c.pulse = 60; c.pulseHz = state.bpm ? clamp(state.bpm / 60, .5, 6) : 2; syncInspector(); dirty = true; commit();
+  toast('Ritimde zoom uygulandı' + (state.bpm ? ' (' + state.bpm + ' BPM)' : ''));
+}
+
+/* ---------- Sağ panel (Inspector) ---------- */
+const TEXS = [['none', 'Yok'], ['grain', 'Film Greni'], ['dust', 'Toz & Çizik'], ['scan', 'Tarama Çizgileri'], ['vhs', 'VHS'], ['leak', 'Işık Sızıntısı'], ['bokeh', 'Bokeh'], ['snow', 'Kar'], ['rain', 'Yağmur'], ['star', 'Yıldız Parıltısı'], ['flare', 'Lens Flare']];
+const FONTS = [['Sans', "system-ui, 'Segoe UI', Arial, sans-serif"], ['Serif', "Georgia, 'Times New Roman', serif"], ['Impact', "Impact, 'Arial Black', sans-serif"], ['Mono', "'Courier New', monospace"], ['El yazısı', "'Comic Sans MS', 'Segoe Script', cursive"]];
+const fv = (v, u) => (Math.round(v * 100) / 100) + (u || '');
+const S = (c, k, label, min, max, step, u) => `<div class="row"><label>${label}${PRO_KEYS.has(k) ? ' <i class="lock">👑</i>' : ''}</label><input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${c[k]}"><span class="val" data-v="${k}" data-u="${u}">${fv(c[k], u)}</span></div>`;
+const sec = (t, body) => `<div class="sec"><h4>${t}</h4>${body}</div>`;
+const infoText = c => `Başlangıç ${fmt(c.start, 1)} · Süre ${fmt(dur(c), 1)}`;
+const ANIMS = [['none', 'Yok'], ['fade', 'Solma'], ['zoomin', 'Yakınlaşma'], ['zoomout', 'Uzaklaşma'], ['left', 'Soldan'], ['right', 'Sağdan'], ['up', 'Yukarıdan'], ['down', 'Aşağıdan'], ['spin', 'Dönerek'], ['pop', 'Zıplama'], ['blur', 'Bulanıktan'], ['type', 'Daktilo (metin)']];
+const TRANS = [['none', 'Yok'], ['dissolve', 'Eriyik'], ['slideL', 'Sola Kaydır'], ['slideR', 'Sağa Kaydır'], ['slideU', 'Yukarı Kaydır'], ['slideD', 'Aşağı Kaydır'], ['zoom', 'Yakınlaştır'], ['spin', 'Döndür'], ['wipe', 'Silme'], ['flash', 'Flaş'], ['glitch', 'Glitch'], ['dip', 'Siyaha Geçiş']];
+const CURVES = [['none', 'Yok'], ['montage', 'Montaj'], ['hero', 'Kahraman'], ['bullet', 'Mermi'], ['jump', 'Zıplamalı Kesme'], ['flashin', 'Flaş Giriş'], ['flashout', 'Flaş Çıkış']];
+const BLENDS = [['source-over', 'Normal'], ['screen', 'Ekran'], ['multiply', 'Çarp'], ['overlay', 'Bindir'], ['lighten', 'Aç'], ['difference', 'Fark']];
+const selF = (c, k, label, opts) => `<div class="row2"><label>${label}</label><select data-k="${k}">${opts.map(o => `<option value="${o[0]}"${o[0] === c[k] ? ' selected' : ''}>${o[1]}${(!pro && proKeyOn(k, o[0])) ? ' 👑' : ''}</option>`).join('')}</select></div>`;
+const chkF = (c, k, label) => `<label><input type="checkbox" data-k="${k}"${c[k] ? ' checked' : ''}>${label}${PRO_KEYS.has(k) ? ' <i class="lock">👑</i>' : ''}</label>`;
+const kfInfo = c => c.kf && c.kf.length ? `${c.kf.length} anahtar kare (zaman çizelgesinde ◆ işareti)` : 'Anahtar kare yok. Bir ana "Anahtar kare ekle"ye basın, sonra başka bir ana gidip boyut/konum/döndürmeyi değiştirin.';
+function renderInspector() {
+  const el = $('#inspector'), c = getSel();
+  if (!c) {
+    el.innerHTML = `<h3>Özellikler</h3><div class="empty">Düzenlemek için zaman çizelgesinden ya da önizlemeden bir öğe seçin.</div>
+      ${sec('Proje', `<div class="row2"><label>Arka plan</label><input type="color" id="bgColor" value="${state.bg}"></div>`)}
+      ${sec('Kısayollar', '<div class="keys">Boşluk: Oynat/Duraklat<br>S: Seçili klibi böl<br>Delete: Sil<br>← / →: 1 kare · Shift: 1 sn<br>Q / W: Başı / sonu kırp · M: Klip sesi<br>Ctrl+D: Çoğalt · Ctrl+Z / Ctrl+Y: Geri al / yinele<br>B: Ritim işareti · Ctrl + tekerlek: Yakınlaştır</div>')}`;
+    return;
+  }
+  const title = { video: 'Video', image: 'Görsel', audio: 'Ses', text: 'Metin' }[c.kind];
+  let h = `<h3>${title} Özellikleri</h3><div class="info" id="info">${infoText(c)}</div>`;
+  if (isVisual(c)) {
+    h += sec('Dönüştür', S(c, 'scale', 'Boyut', 10, 400, 1, '%') + S(c, 'x', 'Konum X', -100, 100, .5, '%') + S(c, 'y', 'Konum Y', -100, 100, .5, '%') + S(c, 'rot', 'Döndür', -180, 180, 1, '°') + S(c, 'opacity', 'Opaklık', 0, 100, 1, '%')
+      + `<div class="acts" style="margin-top:8px"><button class="btn" data-act="kfadd">◆ Anahtar kare ekle/sil</button><button class="btn" data-act="kfclear">Temizle</button></div><div class="hint" id="kfinfo">${kfInfo(c)}</div>`);
+    h += sec('Kırp', S(c, 'cropL', 'Sol', 0, 90, 1, '%') + S(c, 'cropR', 'Sağ', 0, 90, 1, '%') + S(c, 'cropT', 'Üst', 0, 90, 1, '%') + S(c, 'cropB', 'Alt', 0, 90, 1, '%') + `<div class="acts" style="margin-top:8px"><button class="btn" data-act="crop-1:1">1:1</button><button class="btn" data-act="crop-9:16">9:16</button><button class="btn" data-act="crop-16:9">16:9</button><button class="btn" data-act="crop-4:3">4:3</button><button class="btn" data-act="crop-0">Sıfırla</button></div>`);
+    h += sec('Çerçeve & Köşe', S(c, 'round', 'Köşe yuvarlama', 0, 100, 1, '%') + S(c, 'border', 'Kenarlık', 0, 20, 1, 'px') + `<div class="row2"><label>Kenarlık rengi</label><input type="color" data-k="borderColor" value="${c.borderColor}"></div>`);
+    h += sec('Katman (Bindirme / PIP)', `<div class="acts" style="margin-top:0"><button class="btn" data-act="layer">${c.layer === 'over' ? 'Ana videoya taşı' : 'Bindirmeye (PIP) taşı'}</button></div>` + (c.layer === 'over' ? `<div class="acts"><button class="btn" data-act="pip-tl">↖</button><button class="btn" data-act="pip-tr">↗</button><button class="btn" data-act="pip-bl">↙</button><button class="btn" data-act="pip-br">↘</button></div>` : ''));
+    h += sec('Filtreler', S(c, 'brightness', 'Parlaklık', 0, 200, 1, '%') + S(c, 'contrast', 'Kontrast', 0, 200, 1, '%') + S(c, 'saturate', 'Doygunluk', 0, 200, 1, '%') + S(c, 'grayscale', 'Siyah-Beyaz', 0, 100, 1, '%') + S(c, 'sepia', 'Sepya', 0, 100, 1, '%') + S(c, 'hue', 'Renk tonu', -180, 180, 1, '°') + S(c, 'blur', 'Bulanıklık', 0, 20, .5, 'px') + S(c, 'cinematic', 'Sinematik', 0, 100, 1, '%'));
+    h += sec('Renk Düzeltme (CC)', S(c, 'temp', 'Sıcaklık', -100, 100, 1, '') + S(c, 'tint', 'Renk sapması', -100, 100, 1, '') + S(c, 'fade', 'Mat / Solgun', 0, 100, 1, '%') + S(c, 'vignette', 'Vinyet', 0, 100, 1, '%'));
+    h += sec('Hareket Efektleri', S(c, 'shake', 'Titreme', 0, 100, 1, '%') + S(c, 'shakeHz', 'Titreme hızı', 1, 30, 1, '') + S(c, 'motionBlur', 'Hareket blur', 0, 100, 1, '%') + S(c, 'mbAngle', 'Blur açısı', 0, 180, 1, '°') + S(c, 'pulse', 'Zoom ritmi', 0, 100, 1, '%') + S(c, 'pulseHz', 'Ritim hızı', .5, 6, .1, 'Hz') + S(c, 'zoomBlur', 'Zoom blur', 0, 100, 1, '%') + S(c, 'fan', 'Fan (dönel)', 0, 100, 1, '%'));
+    h += sec('Bozulma & Stil Efektleri', S(c, 'glitch', 'Glitch', 0, 100, 1, '%') + S(c, 'rgb', 'RGB ayırma', 0, 100, 1, '%') + S(c, 'pixel', 'Piksel', 0, 100, 1, '%') + S(c, 'wave', 'Dalga', 0, 100, 1, '%') + S(c, 'posterize', 'Posterize', 0, 100, 1, '%') + S(c, 'glow', 'Parıltı (glow)', 0, 100, 1, '%') + S(c, 'disco', 'Disko ışığı', 0, 100, 1, '%') + S(c, 'flash', 'Flaş', 0, 100, 1, '%')
+      + `<div class="chk">${chkF(c, 'invert', 'Negatif')}${chkF(c, 'mirror', 'Ayna')}${chkF(c, 'tile', '4\'lü ayna')}</div>`);
+    h += sec('Chroma Key (Yeşil Perde)', `<div class="chk">${chkF(c, 'chroma', 'Aç')}</div><div class="row2"><label>Anahtar renk</label><input type="color" data-k="chromaColor" value="${c.chromaColor}"></div>` + S(c, 'chromaTol', 'Tolerans', 0, 100, 1, '%') + S(c, 'chromaSoft', 'Yumuşaklık', 0, 100, 1, '%'));
+    h += sec('Doku', selF(c, 'tex', 'Doku', TEXS) + S(c, 'texAmt', 'Yoğunluk', 0, 100, 1, '%'));
+    h += sec('Animasyon & Geçiş', selF(c, 'animIn', 'Giriş', ANIMS) + selF(c, 'animOut', 'Çıkış', ANIMS) + S(c, 'animDur', 'Anim. süresi', .1, 3, .1, 's') + selF(c, 'trans', 'Geçiş', TRANS) + S(c, 'transDur', 'Geçiş süresi', .1, 3, .1, 's'));
+    h += sec('Karışım & Arka Plan', selF(c, 'blend', 'Karışım', BLENDS) + `<div class="chk">${chkF(c, 'bgBlur', 'Bulanık arka plan')}</div>`);
+    h += sec('Solma', S(c, 'fadeIn', 'Giriş solma', 0, 3, .1, 's') + S(c, 'fadeOut', 'Çıkış solma', 0, 3, .1, 's'));
+  }
+  if (c.kind === 'video') h += sec('Hız & Ses', S(c, 'speed', 'Hız', .25, 4, .05, 'x') + selF(c, 'curve', 'Hız eğrisi', CURVES) + S(c, 'volume', 'Ses düzeyi', 0, 100, 1, '%') + `<div class="chk">${chkF(c, 'mute', 'Sesi kapat')}${chkF(c, 'reverse', 'Ters çevir')}</div>`);
+  if (c.kind === 'audio') h += sec('Ses', S(c, 'volume', 'Ses düzeyi', 0, 100, 1, '%') + `<div class="chk">${chkF(c, 'mute', 'Sesi kapat')}</div>` + S(c, 'speed', 'Hız', .25, 4, .05, 'x') + S(c, 'fadeIn', 'Giriş solma', 0, 5, .1, 's') + S(c, 'fadeOut', 'Çıkış solma', 0, 5, .1, 's'));
+  if (c.kind === 'text') {
+    h += sec('Metin', `<textarea data-k="text" rows="3">${esc(c.text)}</textarea>
+      <div class="row2" style="margin-top:8px"><label>Yazı tipi</label><select data-k="font">${FONTS.map(f => `<option value="${f[1]}"${f[1] === c.font ? ' selected' : ''}>${f[0]}</option>`).join('')}</select></div>
+      <div class="row2"><label>Renk</label><input type="color" data-k="color" value="${c.color}"></div>
+      ${S(c, 'size', 'Boyut', 10, 300, 1, 'px')}
+      <div class="chk">${chkF(c, 'bold', 'Kalın')}${chkF(c, 'outline', 'Kontur')}${chkF(c, 'shadow', 'Gölge')}</div>`);
+    h += sec('Konum & Görünüm', S(c, 'x', 'Konum X', 0, 100, .5, '%') + S(c, 'y', 'Konum Y', 0, 100, .5, '%') + S(c, 'opacity', 'Opaklık', 0, 100, 1, '%') + S(c, 'fadeIn', 'Giriş solma', 0, 3, .1, 's') + S(c, 'fadeOut', 'Çıkış solma', 0, 3, .1, 's'));
+    h += sec('Animasyon', selF(c, 'animIn', 'Giriş', ANIMS) + selF(c, 'animOut', 'Çıkış', ANIMS) + S(c, 'animDur', 'Anim. süresi', .1, 3, .1, 's'));
+    h += sec('Zamanlama', `<div class="row2"><label>Başlangıç (sn)</label><input type="number" step="0.1" min="0" data-k="start" value="${+c.start.toFixed(2)}"></div><div class="row2"><label>Süre (sn)</label><input type="number" step="0.1" min="0.1" data-k="dur" value="${+c.dur.toFixed(2)}"></div>`);
+  }
+  h += `<div class="acts"><button class="btn" data-act="split">Böl</button><button class="btn" data-act="dup">Çoğalt</button>${c.kind === 'video' ? '<button class="btn" data-act="freeze">Dondur</button><button class="btn" data-act="extract">Sesi Ayır</button>' : ''}${isVisual(c) ? '<button class="btn" data-act="reset">Sıfırla</button>' : ''}<button class="btn danger" data-act="del">Sil</button></div>`;
+  el.innerHTML = h;
+}
+function syncInspector() {
+  const c = getSel(); if (!c) return;
+  const insp = $('#inspector');
+  const kv = c.kf && c.kf.length ? kfAt(c, localT(c)) : null;
+  const val = k => (kv && KFKEYS.includes(k)) ? kv[k] : c[k];
+  insp.querySelectorAll('[data-k]').forEach(i => {
+    const k = i.dataset.k, v = val(k);
+    if (v === undefined || document.activeElement === i) return;
+    if (i.type === 'checkbox') i.checked = !!v;
+    else if (i.type === 'number') i.value = +(+v).toFixed(2);
+    else i.value = v;
+  });
+  insp.querySelectorAll('[data-v]').forEach(sp => { const v = val(sp.dataset.v); if (v !== undefined) sp.textContent = fv(v, sp.dataset.u); });
+  const inf = $('#info'); if (inf) inf.textContent = infoText(c);
+  const ki = $('#kfinfo'); if (ki) ki.textContent = kfInfo(c);
+}
+function setProp(c, k, v) {
+  if (k === 'speed') { setSpeed(c, v); return; }
+  if (KFKEYS.includes(k) && c.kf && c.kf.length) {
+    const lt = localT(c), cur = kfAt(c, lt); KFKEYS.forEach(q => c[q] = cur[q]);
+    c[k] = v; if (upsertKf(c, lt)) renderTimeline(); dirty = true; return;
+  }
+  if (k === 'start') { c.start = Math.max(0, v); renderTimeline(); }
+  else if (k === 'dur') { c.dur = Math.max(.1, v); renderTimeline(); }
+  else if (k === 'text') { c.text = v; c.name = v.replace(/\n/g, ' ').slice(0, 24) || 'Metin'; const l = document.querySelector(`.clip[data-id="${c.id}"] .lbl`); if (l) l.textContent = c.name; }
+  else c[k] = v;
+  dirty = true;
+}
+const insp = $('#inspector');
+insp.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'bgColor') { state.bg = t.value; dirty = true; return; }
+  const k = t.dataset.k, c = getSel(); if (!k || !c) return;
+  let v;
+  if (t.type === 'checkbox') v = t.checked;
+  else if (t.type === 'range' || t.type === 'number') { v = parseFloat(t.value); if (isNaN(v)) return; }
+  else v = t.value;
+  if (!pro && proKeyOn(k, v)) {
+    requirePro(PRO_NAMES[k] || 'Bu özellik');
+    if (t.type === 'checkbox') t.checked = !!c[k]; else t.value = c[k];
+    const lb = insp.querySelector(`[data-v="${k}"]`); if (lb) lb.textContent = fv(c[k], lb.dataset.u);
+    return;
+  }
+  setProp(c, k, v);
+  const lab = insp.querySelector(`[data-v="${k}"]`); if (lab) lab.textContent = fv(v, lab.dataset.u);
+});
+insp.addEventListener('change', e => { if (e.target.type === 'range') e.target.blur(); commit(); });
+insp.addEventListener('dblclick', e => {
+  const t = e.target, k = t.dataset && t.dataset.k, c = getSel();
+  if (t.type !== 'range' || !c || !(k in DEF)) return;
+  setProp(c, k, DEF[k]); t.value = DEF[k]; syncInspector();
+});
+insp.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const c = getSel(), a = b.dataset.act;
+  if (a === 'split') splitAt();
+  else if (a === 'del') delSel();
+  else if (a === 'freeze') freezeFrame();
+  else if (a === 'dup') duplicateSel();
+  else if (a === 'extract' && c) extractAudio(c);
+  else if (a === 'layer' && c) setLayer(c);
+  else if (a.startsWith('pip-') && c) { const P = { tl: [-28, -26], tr: [28, -26], bl: [-28, 26], br: [28, 26] }[a.slice(4)]; setProp(c, 'x', P[0]); setProp(c, 'y', P[1]); syncInspector(); commit(); }
+  else if (a.startsWith('crop-') && c) applyCrop(c, a.slice(5));
+  else if (a === 'kfadd' && c) { if (requirePro('Anahtar kare')) toggleKf(c); }
+  else if (a === 'kfclear' && c) { c.kf = []; renderTimeline(); syncInspector(); dirty = true; toast('Anahtar kareler temizlendi'); }
+  else if (a === 'reset' && c) { Object.assign(c, DEF_VIS()); syncInspector(); dirty = true; toast('Sıfırlandı'); }
+});
+
+/* ---------- Hız ---------- */
+function setSpeed(c, v) {
+  v = clamp(v, .25, 4);
+  const od = dur(c), oe = c.start + od;
+  c.speed = v;
+  const delta = dur(c) - od;
+  state.clips.forEach(o => { if (o !== c && trackOf(o) === trackOf(c) && o.start >= oe - .001) o.start = Math.max(0, o.start + delta); });
+  if (state.playing) { playStartWall = performance.now(); playStartT = state.cur; }
+  renderTimeline(); syncInspector(); updateSideTabs(); dirty = true;
+}
+function target(kinds) {
+  const s = getSel();
+  if (s && kinds.includes(s.kind)) return s;
+  const c = activeAt(state.cur).filter(x => kinds.includes(x.kind)).pop();
+  if (c) { select(c.id); return c; }
+  toast('Önce zaman çizelgesinden bir klip seçin');
+  return null;
+}
+$$('#speedBtns button').forEach(b => b.onclick = () => { const c = target(['video', 'audio']); if (c) { setSpeed(c, +b.dataset.s); commit(); } });
+$('#spd').addEventListener('change', () => commit());
+$('#spd').addEventListener('input', e => { const c = target(['video', 'audio']); if (c) setSpeed(c, +e.target.value); else e.target.value = 1; });
+$('#vol').addEventListener('input', e => {
+  const c = target(['video', 'audio']); if (!c) { e.target.value = 100; return; }
+  c.volume = +e.target.value; $('#volv').textContent = c.volume + '%'; syncInspector(); dirty = true;
+});
+function updateSideTabs() {
+  const c = getSel(), m = c && isMedia(c) ? c : null;
+  $('#spd').value = m ? m.speed : 1; $('#spdv').textContent = (m ? m.speed : 1) + 'x';
+  $('#vol').value = m ? m.volume : 100; $('#volv').textContent = (m ? m.volume : 100) + '%';
+}
+
+/* ---------- Filtreler ---------- */
+const FILTERS = [
+  { n: 'Orijinal', v: {} },
+  { n: 'Sinematik', v: { contrast: 105, saturate: 105, cinematic: 70 } },
+  { n: 'Siyah-Beyaz', v: { grayscale: 100, contrast: 110 } },
+  { n: 'Vintage', v: { sepia: 60, contrast: 95, brightness: 105, saturate: 85 } },
+  { n: 'Soğuk', v: { hue: -20, saturate: 110 } },
+  { n: 'Sıcak', v: { hue: 12, sepia: 20, saturate: 120 } },
+  { n: 'Canlı', v: { saturate: 160, contrast: 110 } },
+  { n: 'Soluk', v: { contrast: 85, brightness: 110, saturate: 80 } },
+  { n: 'Bulanık', v: { blur: 6 } },
+  { n: 'Altın Saat', v: { temp: 60, saturate: 115, vignette: 30 } },
+  { n: 'Buz Mavisi', v: { temp: -60, tint: -10, contrast: 108 } },
+  { n: 'Mat Film', v: { fade: 55, contrast: 92, saturate: 90, vignette: 25 } },
+  { n: 'Teal-Orange', v: { temp: 35, tint: -15, contrast: 112, saturate: 120, vignette: 20 } },
+  { n: 'Neon Gece', v: { tint: 45, contrast: 118, saturate: 150, brightness: 92, vignette: 30 } },
+  { n: 'Yaşam', v: { brightness: 105, saturate: 112, contrast: 104 } },
+  { n: 'Film Noir', v: { grayscale: 100, contrast: 135, vignette: 45 } },
+  { n: 'Gün Batımı', v: { temp: 70, tint: 20, saturate: 130, vignette: 25 } },
+  { n: 'Orman', v: { temp: -15, tint: -25, saturate: 125, contrast: 105 } },
+  { n: 'Retro 90lar', v: { sepia: 35, hue: -10, fade: 35, contrast: 105, tex: 'grain' } }
+];
+const FXCARDS = [
+  { n: 'Titreme', e: '📳', v: { shake: 45, shakeHz: 12 } },
+  { n: 'Hareket Blur', e: '💨', v: { motionBlur: 55, mbAngle: 0 } },
+  { n: 'Kamera Sarsıntısı', e: '🎬', v: { shake: 60, shakeHz: 16, motionBlur: 70 } },
+  { n: 'Glitch', e: '⚡', v: { glitch: 60, rgb: 25 } },
+  { n: 'RGB Ayırma', e: '🌈', v: { rgb: 50 } },
+  { n: 'Piksel', e: '▦', v: { pixel: 35 } },
+  { n: 'Zoom Ritmi', e: '💓', v: { pulse: 60, pulseHz: 2 } },
+  { n: 'Zoom Blur', e: '🔍', v: { zoomBlur: 60 } },
+  { n: 'Fan (Dönel)', e: '🌀', v: { fan: 60 } },
+  { n: 'Flaş', e: '🔆', v: { flash: 70 } },
+  { n: 'Ayna', e: '🪞', v: { mirror: true } },
+  { n: 'Negatif', e: '🌓', v: { invert: true } },
+  { n: 'Dalga', e: '🌊', v: { wave: 50 } },
+  { n: '4\'lü Ayna', e: '🔲', v: { tile: true } },
+  { n: 'Posterize', e: '🎨', v: { posterize: 60 } },
+  { n: 'Disko', e: '🪩', v: { disco: 70 } },
+  { n: 'Parıltı (Glow)', e: '💡', v: { glow: 60 } },
+  { n: 'Bulanık Arka Plan', e: '🖼', v: { bgBlur: true } },
+  { n: 'Yeşil Perde', e: '🟩', v: { chroma: true } }
+];
+const TEXCARDS = [
+  { n: 'Film Greni', e: '🎞', v: { tex: 'grain', texAmt: 55 } },
+  { n: 'Toz & Çizik', e: '✨', v: { tex: 'dust', texAmt: 55 } },
+  { n: 'Tarama Çizgisi', e: '📺', v: { tex: 'scan', texAmt: 55 } },
+  { n: 'VHS', e: '📼', v: { tex: 'vhs', texAmt: 70 } },
+  { n: 'Işık Sızıntısı', e: '🌅', v: { tex: 'leak', texAmt: 60 } },
+  { n: 'Bokeh', e: '🔮', v: { tex: 'bokeh', texAmt: 60 } },
+  { n: 'Kar', e: '❄️', v: { tex: 'snow', texAmt: 60 } },
+  { n: 'Yağmur', e: '🌧', v: { tex: 'rain', texAmt: 60 } },
+  { n: 'Yıldız', e: '🌟', v: { tex: 'star', texAmt: 70 } },
+  { n: 'Lens Flare', e: '☀️', v: { tex: 'flare', texAmt: 60 } }
+];
+const cardPro = v => Object.keys(v).some(k => proKeyOn(k, v[k]));
+const cardHTML = (list, attr) => list.map((f, i) => `<button class="fcard" ${attr}="${i}">${cardPro(f.v) ? '<i class="lockb">👑</i>' : ''}<div class="sw e">${f.e}</div><span>${f.n}</span></button>`).join('');
+$('#fxGrid').innerHTML = cardHTML(FXCARDS, 'data-x');
+$('#texGrid').innerHTML = cardHTML(TEXCARDS, 'data-x2');
+function toggleFx(v) {
+  const c = target(['video', 'image']); if (!c) return;
+  if (cardPro(v) && !requirePro('Bu efekt')) return;
+  const on = Object.keys(v).every(k => c[k] === v[k]);
+  if (on) Object.keys(v).forEach(k => c[k] = DEF[k]); else Object.assign(c, v);
+  syncInspector(); dirty = true; commit();
+}
+$('#fxGrid').addEventListener('click', e => { const b = e.target.closest('[data-x]'); if (b) toggleFx(FXCARDS[+b.dataset.x].v); });
+$('#texGrid').addEventListener('click', e => { const b = e.target.closest('[data-x2]'); if (b) toggleFx(TEXCARDS[+b.dataset.x2].v); });
+$('#filterGrid').innerHTML = FILTERS.map((f, i) => `<button class="fcard" data-f="${i}">${(cardPro(f.v) || PRO_FILTERS.has(f.n)) ? '<i class="lockb">👑</i>' : ''}<div class="sw" style="filter:${filterStr(Object.assign(DEF_FX(), f.v))}"></div><span>${f.n}</span></button>`).join('');
+$('#filterGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if (!b) return;
+  const f = FILTERS[+b.dataset.f];
+  if ((cardPro(f.v) || PRO_FILTERS.has(f.n)) && !requirePro('Bu filtre')) return;
+  const c = target(['video', 'image']); if (!c) return;
+  Object.assign(c, DEF_FX(), f.v); syncInspector(); dirty = true; commit();
+});
+$('#fxFadeIn').onclick = () => { const c = target(['video', 'image', 'text']); if (c) { c.fadeIn = c.fadeIn ? 0 : 1; syncInspector(); dirty = true; toast(c.fadeIn ? 'Giriş solması açıldı' : 'Giriş solması kapatıldı'); } };
+$('#fxFadeOut').onclick = () => { const c = target(['video', 'image', 'text']); if (c) { c.fadeOut = c.fadeOut ? 0 : 1; syncInspector(); dirty = true; toast(c.fadeOut ? 'Çıkış solması açıldı' : 'Çıkış solması kapatıldı'); } };
+
+/* ---------- Geçiş / Animasyon / Hız eğrisi ---------- */
+const TR_EMO = ['🚫', '🌫', '⬅️', '➡️', '⬆️', '⬇️', '🔍', '🌀', '◧', '⚡', '📺', '🌑'];
+const AN_EMO = ['🚫', '🌫', '🔍', '🔭', '⬅️', '➡️', '⬆️', '⬇️', '🌀', '🎈', '💧', '⌨️'];
+const cardsOf = (list, emo, attr, key) => list.map((x, i) => `<button class="fcard" ${attr}="${i}">${key && proKeyOn(key, x[0]) ? '<i class="lockb">👑</i>' : ''}<div class="sw e">${emo[i]}</div><span>${x[1]}</span></button>`).join('');
+$('#transGrid').innerHTML = cardsOf(TRANS, TR_EMO, 'data-tr', 'trans');
+$('#animInGrid').innerHTML = cardsOf(ANIMS, AN_EMO, 'data-ai', 'animIn');
+$('#animOutGrid').innerHTML = cardsOf(ANIMS, AN_EMO, 'data-ao', 'animOut');
+$('#transGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-tr]'); if (!b) return;
+  const id = TRANS[+b.dataset.tr][0];
+  if (proKeyOn('trans', id) && !requirePro('Bu geçiş')) return;
+  const c = target(['video', 'image']); if (!c) return;
+  c.trans = id; syncInspector(); dirty = true; commit();
+  if (c.trans !== 'none') { seekTo(c.start + c.transDur * .4); toast('Geçiş uygulandı. Klibin başına gidip oynatın'); }
+});
+function animClick(key, attr) {
+  return e => {
+    const b = e.target.closest('[' + attr + ']'); if (!b) return;
+    const id = ANIMS[+b.getAttribute(attr)][0];
+    if (proKeyOn(key, id) && !requirePro('Bu animasyon')) return;
+    const c = target(['video', 'image', 'text']); if (!c) return;
+    c[key] = id; syncInspector(); dirty = true; commit();
+    if (c[key] !== 'none') seekTo(key === 'animIn' ? c.start + .1 : Math.max(c.start, endOf(c) - .3));
+  };
+}
+$('#animInGrid').addEventListener('click', animClick('animIn', 'data-ai'));
+$('#animOutGrid').addEventListener('click', animClick('animOut', 'data-ao'));
+$('#curveBtns').innerHTML = CURVES.map((x, i) => `<button class="btn" data-cv="${i}">${x[1]}</button>`).join('');
+$('#curveBtns').addEventListener('click', e => {
+  const b = e.target.closest('[data-cv]'); if (!b) return;
+  const id = CURVES[+b.dataset.cv][0];
+  if (proKeyOn('curve', id) && !requirePro('Hız eğrisi')) return;
+  const c = target(['video']); if (!c) return;
+  c.curve = id; syncInspector(); dirty = true; commit();
+});
+$('#btnReverse').onclick = () => { if (!requirePro('Ters oynatma')) return; const c = target(['video']); if (c) { c.reverse = !c.reverse; syncInspector(); dirty = true; toast(c.reverse ? 'Ters çevrildi' : 'Normal oynatma'); } };
+$('#btnFreeze2').onclick = freezeFrame;
+const STICKERS = ['😀', '😂', '😍', '🔥', '💯', '❤️', '⭐', '🎉', '👍', '👀', '💥', '✨', '🎵', '🌈', '🚀', '👑', '😎', '🥳'];
+$('#stickers').innerHTML = STICKERS.map(x => `<button data-st="${x}">${x}</button>`).join('');
+$('#stickers').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (b) addText(b.dataset.st, { size: 180, outline: false, shadow: false, bold: false, animIn: 'pop' }); });
+
+/* ---------- Metin ---------- */
+const TPRESETS = [
+  { n: 'Başlık', p: { size: 88, bold: true, color: '#ffffff', outline: true, shadow: true, y: 50 } },
+  { n: 'Altyazı', p: { size: 44, bold: false, color: '#ffffff', outline: true, shadow: false, y: 88 } },
+  { n: 'Neon', p: { size: 80, bold: true, color: '#7df9ff', outline: false, shadow: true, y: 50 } },
+  { n: 'Sarı Vurgu', p: { size: 64, bold: true, color: '#facc15', outline: true, shadow: true, y: 20 } },
+  { n: 'Klasik', p: { size: 60, bold: false, color: '#fde68a', outline: false, shadow: true, y: 50, font: FONTS[1][1] } },
+  { n: 'Kalın', p: { size: 110, bold: true, color: '#ff3b4e', outline: true, shadow: true, y: 50, font: FONTS[2][1] } },
+  { n: 'Zıplayan Başlık', p: { size: 96, bold: true, color: '#ffffff', outline: true, shadow: true, y: 50, animIn: 'pop' } },
+  { n: 'Daktilo', p: { size: 54, bold: false, color: '#ffffff', outline: false, shadow: true, y: 80, font: FONTS[3][1], animIn: 'type', animDur: 1.5 } }
+];
+function addText(txt, p) {
+  const c = { id: nid(), kind: 'text', name: txt.replace(/\n/g, ' ').slice(0, 24), text: txt, font: FONTS[0][1], size: 64, color: '#ffffff', bold: true, outline: true, shadow: true, x: 50, y: 50, opacity: 100, fadeIn: 0, fadeOut: 0, animIn: 'none', animOut: 'none', animDur: .6, start: Math.min(state.cur, Math.max(0, total() - .5)), dur: 3, ...p };
+  state.clips.push(c); renderTimeline(); select(c.id); commit();
+}
+$('#btnAddText').onclick = () => addText($('#newText').value.trim() || 'Metin', {});
+$('#textPresets').innerHTML = TPRESETS.map((t, i) => `<button class="btn" data-p="${i}">${t.n}</button>`).join('');
+$('#textPresets').addEventListener('click', e => {
+  const b = e.target.closest('[data-p]'); if (!b) return;
+  const p = TPRESETS[+b.dataset.p].p, s = getSel();
+  if (s && s.kind === 'text') { Object.assign(s, p); renderInspector(); dirty = true; }
+  else addText($('#newText').value.trim() || 'Metin', p);
+});
+
+/* ---------- Medya listesi ---------- */
+function assetHTML(a) {
+  const th = a.type === 'video' ? `<video src="${a.url}#t=0.1" muted preload="metadata"></video>` : a.type === 'image' ? `<img src="${a.url}" alt="">` : ic('music', 28);
+  return `<div class="asset"><div class="th">${th}</div><div class="nm" title="${esc(a.name)}">${esc(a.name)}</div>${a.type !== 'image' ? `<span class="du">${fmt(a.dur)}</span>` : ''}<button class="add" data-aid="${a.id}" title="Zaman çizelgesine ekle">${ic('plus', 14)}</button>${a.type !== 'audio' ? `<button class="add2" data-aid2="${a.id}" title="Bindirme (PIP) olarak ekle">PIP</button>` : ''}</div>`;
+}
+function renderAssets() {
+  $('#assetList').innerHTML = state.assets.length ? state.assets.map(assetHTML).join('') : '<div class="listempty">Henüz dosya yüklenmedi</div>';
+  const au = state.assets.filter(a => a.type === 'audio');
+  $('#audioList').innerHTML = au.length ? au.map(assetHTML).join('') : '<div class="listempty">Henüz ses dosyası yok</div>';
+}
+document.addEventListener('click', e => {
+  const b2 = e.target.closest('[data-aid2]');
+  if (b2) { const a2 = state.assets.find(x => x.id === b2.dataset.aid2); if (a2) addAssetToTimeline(a2, true); return; }
+  const b = e.target.closest('[data-aid]'); if (!b) return;
+  const a = state.assets.find(x => x.id === b.dataset.aid); if (a) addAssetToTimeline(a);
+});
+
+/* ---------- Önizleme üzerinde sürükleme ---------- */
+let cdrag = null;
+const cpos = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height }; };
+const inBB = (c, p) => c._bb && p.x >= c._bb.x && p.x <= c._bb.x + c._bb.w && p.y >= c._bb.y && p.y <= c._bb.y + c._bb.h;
+cv.addEventListener('pointerdown', e => {
+  if (state.exporting) return;
+  if (!state.clips.length) { $('#fileInput').click(); return; }
+  const p = cpos(e), act = activeAt(state.cur);
+  let hit = act.filter(c => c.kind === 'text').reverse().find(c => inBB(c, p));
+  if (!hit) hit = act.filter(isVisual).sort((a, b) => ((a.layer === 'over') - (b.layer === 'over')) || (a.start - b.start)).reverse().find(c => inBB(c, p));
+  if (!hit) { select(null); return; }
+  select(hit.id);
+  if (hit.kf && hit.kf.length) { const cur = kfAt(hit, localT(hit)); KFKEYS.forEach(q => hit[q] = cur[q]); }
+  cdrag = { c: hit, sx: p.x, sy: p.y, ox: hit.x, oy: hit.y };
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove', e => {
+  if (!cdrag) return;
+  const p = cpos(e), c = cdrag.c;
+  c.x = cdrag.ox + (p.x - cdrag.sx) / W * 100; c.y = cdrag.oy + (p.y - cdrag.sy) / H * 100;
+  if (c.kind === 'text') { c.x = clamp(c.x, 0, 100); c.y = clamp(c.y, 0, 100); }
+  else { c.x = clamp(c.x, -100, 100); c.y = clamp(c.y, -100, 100); }
+  if (c.kf && c.kf.length && upsertKf(c, localT(c))) renderTimeline();
+  syncInspector(); dirty = true;
+});
+cv.addEventListener('pointerup', () => { if (cdrag) commit(); cdrag = null; });
+cv.addEventListener('pointercancel', () => cdrag = null);
+
+/* ---------- Tuval boyutu ---------- */
+function fit() {
+  const st = $('#stage'), aw = st.clientWidth - 24, ah = st.clientHeight - 24;
+  if (aw <= 0 || ah <= 0) return;
+  const s = Math.min(aw / W, ah / H);
+  cv.style.width = Math.floor(W * s) + 'px'; cv.style.height = Math.floor(H * s) + 'px';
+}
+function setAspect(v) {
+  const [w, h] = v.split('x').map(Number); W = w; H = h; cv.width = w; cv.height = h; fit(); dirty = true;
+}
+$('#aspect').onchange = e => setAspect(e.target.value);
+new ResizeObserver(fit).observe($('#stage'));
+window.addEventListener('resize', () => { fit(); renderTimeline(); });
+
+/* ---------- Dışa aktarma ---------- */
+let actx = null, adest = null, rec = null, expCancel = false;
+function audioGraph() {
+  if (!actx) { actx = new (window.AudioContext || window.webkitAudioContext)(); adest = actx.createMediaStreamDestination(); }
+  if (actx.state === 'suspended') actx.resume();
+  state.clips.forEach(c => {
+    if (isMedia(c) && !c.src) {
+      try { c.src = actx.createMediaElementSource(c.el); c.src.connect(adest); c.src.connect(actx.destination); } catch (e) {}
+    }
+  });
+}
+function pickMime(fmt) {
+  const list = fmt === 'mp4'
+    ? ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1', 'video/mp4']
+    : ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  if (!window.MediaRecorder) return null;
+  return list.find(m => MediaRecorder.isTypeSupported(m)) || null;
+}
+function exportUI(running) {
+  ['expStart', 'expFmt', 'expQ', 'expRes', 'expFps'].forEach(id => $('#' + id).disabled = running);
+  $('#expClose').textContent = running ? 'İptal' : 'Kapat';
+}
+function expDims(S) {
+  const r = W / H; let w, h;
+  if (W >= H) { h = S; w = Math.round(S * r); } else { w = S; h = Math.round(S / r); }
+  return [w + (w % 2), h + (h % 2)];
+}
+function expInfo() {
+  const S = +$('#expRes').value, fps = +$('#expFps').value, bps = +$('#expQ').value * Math.max(1, S / 720);
+  const [w, h] = expDims(S);
+  $('#expInfo').textContent = `Çıktı: ${w}×${h} · ${fps} fps · ~${(bps / 1e6).toFixed(0)} Mbps`;
+}
+['expRes', 'expFps', 'expQ', 'expFmt'].forEach(id => $('#' + id).addEventListener('change', expInfo));
+async function startExport() {
+  const tot = total();
+  if (!tot) { toast('Dışa aktarılacak içerik yok'); return; }
+  if (!window.MediaRecorder || !cv.captureStream) { $('#expHint').textContent = 'Bu tarayıcı MediaRecorder / captureStream desteklemiyor. Chrome, Edge veya Firefox kullanın.'; return; }
+  const S = +$('#expRes').value, fps = +$('#expFps').value, q = +$('#expQ').value;
+  if (!pro) {
+    const used = usesPro();
+    if (used.length) { showPremium('Projede Premium efektler var: ' + used.join(', ') + '. Premium alın ya da bunları kaldırın.'); return; }
+  }
+  const want = $('#expFmt').value;
+  let mime = pickMime(want), hint = '';
+  if (!mime && want === 'mp4') { mime = pickMime('webm'); hint = 'Tarayıcı MP4 kaydını desteklemiyor, WebM olarak kaydediliyor. '; }
+  if (!mime) { $('#expHint').textContent = 'Desteklenen bir video biçimi bulunamadı.'; return; }
+  expCancel = false; stopPlay(); state.exporting = true; exportUI(true);
+  $('#expHint').textContent = hint + 'Kaydediliyor… sekmeyi açık tutun.';
+  const pw = W, ph = H, [nw, nh] = expDims(S);
+  W = nw; H = nh; cv.width = nw; cv.height = nh;
+  try {
+    audioGraph();
+    const stream = cv.captureStream(fps);
+    adest.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+    const chunks = [], bps = q * Math.max(1, S / 720);
+    try { rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: bps }); }
+    catch (e) { rec = new MediaRecorder(stream); mime = rec.mimeType || mime; }
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    const done = new Promise(r => rec.onstop = r);
+    seekTo(0); await new Promise(r => setTimeout(r, 400));
+    rec.start(250);
+    state.onEnd = () => setTimeout(() => { if (rec && rec.state !== 'inactive') rec.stop(); }, 250);
+    const iv = setInterval(() => { $('#expBar').style.width = Math.min(100, state.cur / tot * 100) + '%'; }, 200);
+    play();
+    await done;
+    clearInterval(iv);
+    if (expCancel) { $('#expBar').style.width = '0'; $('#expHint').textContent = 'İptal edildi.'; return; }
+    $('#expBar').style.width = '100%';
+    const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+    const blob = new Blob(chunks, { type: mime.split(';')[0] });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (($('#projName').value || 'proje').trim().replace(/[\\/:*?"<>|]+/g, '_') || 'proje') + '.' + ext;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    $('#expHint').textContent = `Tamamlandı! ${a.download} (${(blob.size / 1048576).toFixed(1)} MB, ${nw}×${nh}) indirildi.`;
+  } finally {
+    state.onEnd = null; state.exporting = false; exportUI(false);
+    W = pw; H = ph; cv.width = pw; cv.height = ph; fit(); dirty = true;
+  }
+}
+$('#btnExport').onclick = () => {
+  if (!total()) { toast('Önce bir video yükleyin'); return; }
+  $('#expBar').style.width = '0';
+  $('#expHint').textContent = 'Dışa aktarma gerçek zamanlı çalışır: video süresi kadar sürer. İşlem bitene kadar bu sekmeyi açık tutun.';
+  if (!pickMime('mp4')) { const o = $('#expFmt'); o.value = 'webm'; }
+  expInfo(); $('#exportModal').hidden = false;
+};
+$('#expStart').onclick = startExport;
+$('#expClose').onclick = () => {
+  if (state.exporting) { expCancel = true; stopPlay(); if (rec && rec.state !== 'inactive') rec.stop(); }
+  else $('#exportModal').hidden = true;
+};
+
+/* ---------- Mobil paneller (alt çekmece) ---------- */
+const mq = window.matchMedia('(max-width:900px)');
+function setSheet(v) {
+  if (v) document.body.dataset.sheet = v; else delete document.body.dataset.sheet;
+  $('#btnInsp').classList.toggle('on', v === 'insp');
+  requestAnimationFrame(() => {
+    fit(); renderTimeline();
+    const sc = $('#tlScroll'); sc.scrollLeft = Math.max(0, state.cur * state.pps - sc.clientWidth / 2); dirty = true;
+  });
+}
+$('#rail').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]'); if (!b || !mq.matches) return;
+  setSheet(document.body.dataset.sheet === 'tab' && b.classList.contains('on') ? null : 'tab');
+}, true);
+$('#btnInsp').onclick = () => {
+  if (!getSel()) { toast('Önce zaman çizelgesinden bir klip seçin'); return; }
+  setSheet(document.body.dataset.sheet === 'insp' ? null : 'insp');
+};
+$('#sheetX').onclick = () => setSheet(null);
+mq.addEventListener('change', () => setSheet(null));
+const zoomBy = f => { const z = $('#zoom'); z.value = Math.max(+z.min, Math.min(+z.max, Math.round(+z.value * f))); z.dispatchEvent(new Event('input', { bubbles: true })); };
+$('#zin').onclick = () => zoomBy(1.4); $('#zout').onclick = () => zoomBy(1 / 1.4);
+
+/* ---------- Genel bağlamalar ---------- */
+$('#rail').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]'); if (!b) return;
+  $$('#rail button').forEach(x => x.classList.toggle('on', x === b));
+  $$('.tab').forEach(x => x.classList.toggle('on', x.dataset.tab === b.dataset.tab));
+});
+const fi = $('#fileInput');
+['#btnUpload', '#btnUpload2', '#btnUploadAudio'].forEach(s => $(s).onclick = () => fi.click());
+fi.onchange = () => { if (fi.files.length) addFiles([...fi.files]); fi.value = ''; };
+let dragN = 0;
+window.addEventListener('dragenter', e => { e.preventDefault(); dragN++; $('#dropOverlay').classList.add('on'); });
+window.addEventListener('dragleave', e => { dragN--; if (dragN <= 0) { dragN = 0; $('#dropOverlay').classList.remove('on'); } });
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => {
+  e.preventDefault(); dragN = 0; $('#dropOverlay').classList.remove('on');
+  if (e.dataTransfer.files.length) { const fl = [...e.dataTransfer.files]; if (!$('#home').hidden) newProject(fl); else addFiles(fl); }
+});
+$('#btnPlay').onclick = togglePlay;
+$('#btnStart').onclick = () => seekTo(0);
+$('#btnBack').onclick = () => seekTo(state.cur - 5);
+$('#btnFwd').onclick = () => seekTo(state.cur + 5);
+$('#btnSplit').onclick = splitAt;
+$('#btnFreeze').onclick = freezeFrame;
+$('#btnDel').onclick = delSel;
+const sk = $('#seek');
+sk.addEventListener('pointerdown', () => seeking = true);
+sk.addEventListener('input', () => seekTo(sk.value / 1000 * total()));
+sk.addEventListener('change', () => { seeking = false; sk.blur(); });
+window.addEventListener('pointerup', () => seeking = false);
+$('#btnUndo').onclick = undo; $('#btnRedo').onclick = redo; $('#btnDup').onclick = duplicateSel;
+$('#btnTrimS').onclick = () => trimEdge('start'); $('#btnTrimE').onclick = () => trimEdge('end'); $('#btnMute').onclick = toggleMuteSel;
+$$('.tm').forEach(b => b.onclick = e => {
+  e.stopPropagation(); const k = b.dataset.tm; state.trackMute[k] = !state.trackMute[k];
+  b.textContent = state.trackMute[k] ? '🔇' : '🔊'; dirty = true; toast(state.trackMute[k] ? 'Katman sesi kapatıldı' : 'Katman sesi açıldı');
+});
+$('#btnMaster').onclick = () => { state.masterMute = !state.masterMute; $('#btnMaster').textContent = state.masterMute ? '🔇' : '🔊'; dirty = true; };
+$('#masterVol').addEventListener('input', e => { state.master = e.target.value / 100; dirty = true; });
+$('#btnBeat').onclick = analyzeBeats; $('#btnBeatMark').onclick = addBeat;
+$('#btnBeatClear').onclick = () => { setBeats([]); toast('Ritim işaretleri temizlendi'); };
+$('#btnBeatCut').onclick = cutOnBeats; $('#btnBeatZoom').onclick = beatZoom;
+window.addEventListener('keydown', e => {
+  const tg = e.target;
+  if ((tg.tagName === 'INPUT' && tg.type !== 'range' && tg.type !== 'checkbox') || tg.tagName === 'TEXTAREA' || tg.tagName === 'SELECT') return;
+  if (state.exporting || !$('#home').hidden) return;
+  const k = e.key.toLowerCase();
+  if (e.ctrlKey || e.metaKey) {
+    if (k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+    else if (k === 'y') { e.preventDefault(); redo(); }
+    else if (k === 'd') { e.preventDefault(); duplicateSel(); }
+    return;
+  }
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  else if (k === 's') splitAt();
+  else if (k === 'q') trimEdge('start');
+  else if (k === 'w') trimEdge('end');
+  else if (k === 'm') toggleMuteSel();
+  else if (k === 'b') addBeat();
+  else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); delSel(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); seekTo(state.cur - (e.shiftKey ? 1 : 1 / 30)); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); seekTo(state.cur + (e.shiftKey ? 1 : 1 / 30)); }
+});
+
+/* ---------- Proje kayıt (IndexedDB) ---------- */
+let dbOK = false, saveT = 0, savePromise = Promise.resolve(), quotaWarned = false;
+Object.assign(state, { pid: null, persisted: false, saved: new Set() });
+const rq = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const DB = {
+  db: null,
+  open() {
+    if (this.db) return Promise.resolve(this.db);
+    return new Promise((res, rej) => {
+      if (!window.indexedDB) return rej(new Error('IndexedDB yok'));
+      const r = indexedDB.open('clipforge', 1);
+      r.onupgradeneeded = () => { const d = r.result; d.createObjectStore('projects', { keyPath: 'id' }); d.createObjectStore('files'); };
+      r.onsuccess = () => { this.db = r.result; res(r.result); }; r.onerror = () => rej(r.error);
+    });
+  },
+  async get(store, key) { const d = await this.open(); return rq(d.transaction(store).objectStore(store).get(key)); },
+  async all(store) { const d = await this.open(); return rq(d.transaction(store).objectStore(store).getAll()); },
+  async put(store, val, key) {
+    const d = await this.open(), t = d.transaction(store, 'readwrite');
+    key === undefined ? t.objectStore(store).put(val) : t.objectStore(store).put(val, key);
+    return new Promise((res, rej) => { t.oncomplete = res; t.onerror = t.onabort = () => rej(t.error); });
+  },
+  async del(store, key) {
+    const d = await this.open(), t = d.transaction(store, 'readwrite'); t.objectStore(store).delete(key);
+    return new Promise((res, rej) => { t.oncomplete = res; t.onerror = t.onabort = () => rej(t.error); });
+  },
+  delFiles(pid) { return this.del('files', IDBKeyRange.bound(pid + '|', pid + '|￿')); }
+};
+const newPid = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function setSaveInfo(t) { $('#saveInfo').textContent = t; }
+function scheduleSave() {
+  if (!dbOK || !state.pid) return;
+  setSaveInfo('Kaydediliyor…'); clearTimeout(saveT); saveT = setTimeout(saveProject, 1200);
+}
+function saveProject() { clearTimeout(saveT); savePromise = savePromise.then(doSave).catch(() => {}); return savePromise; }
+async function doSave() {
+  const pid = state.pid;
+  if (!dbOK || !pid || (!state.clips.length && !state.persisted)) { setSaveInfo(''); return; }
+  try {
+    for (const a of state.assets) {
+      if (state.saved.has(a.id)) continue;
+      const blob = await (await fetch(a.url)).blob();
+      await DB.put('files', blob, pid + '|' + a.id); state.saved.add(a.id);
+    }
+    const drop = (k, v) => (k === 'el' || k === 'src' || k === '_bb' || k === 'url') ? undefined : v;
+    const clips = state.clips.map(c => {
+      const o = JSON.parse(JSON.stringify(c, drop));
+      if (c.url) { if (c.url.startsWith('data:')) o.durl = c.url; else { const a = state.assets.find(x => x.url === c.url); if (a) o.aid = a.id; } }
+      return o;
+    });
+    let thumb = '';
+    try { const tc = document.createElement('canvas'); tc.width = 320; tc.height = Math.max(1, Math.round(320 * H / W)); tc.getContext('2d').drawImage(cv, 0, 0, tc.width, tc.height); thumb = tc.toDataURL('image/jpeg', .6); } catch (e) {}
+    await DB.put('projects', { id: pid, name: $('#projName').value || 'Adsız Proje', updated: Date.now(), aspect: $('#aspect').value, clips, assets: state.assets.map(a => ({ id: a.id, type: a.type, name: a.name, dur: a.dur, w: a.w, h: a.h })), beats: state.beats, bpm: state.bpm, dur: total(), n: state.clips.length, thumb });
+    state.persisted = true;
+    const d = new Date(); setSaveInfo('Kaydedildi ✓ ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'));
+  } catch (e) {
+    console.error(e); setSaveInfo('Kaydedilemedi');
+    if (!quotaWarned) { quotaWarned = true; toast('Proje kaydedilemedi: tarayıcı depolama alanı dolu olabilir', 6000); }
+  }
+}
+const flushSave = () => saveProject();
+function ago(t) {
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return 'az önce'; if (m < 60) return m + ' dk önce'; if (m < 1440) return Math.round(m / 60) + ' sa önce';
+  return new Date(t).toLocaleDateString('tr-TR');
+}
+async function renderProjects() {
+  const box = $('#plist'); let list = [];
+  if (dbOK) { try { list = await DB.all('projects'); } catch (e) {} }
+  list.sort((a, b) => b.updated - a.updated);
+  box.hidden = !list.length;
+  $('#pgrid').innerHTML = list.map(p => `<div class="pcard" data-pid="${p.id}"><div class="th" style="background-image:url('${p.thumb || ''}')"></div><div class="pa"><button data-pa="dup" title="Kopyala">⧉</button><button data-pa="del" title="Sil">🗑</button></div><div class="pi"><b>${esc(p.name)}</b><small>${p.n} klip · ${fmt(p.dur || 0)} · ${ago(p.updated)}</small></div></div>`).join('');
+}
+$('#pgrid').addEventListener('click', async e => {
+  const card = e.target.closest('.pcard'); if (!card) return;
+  const pid = card.dataset.pid, pa = e.target.closest('[data-pa]');
+  if (!pa) { openProject(pid); return; }
+  if (pa.dataset.pa === 'del') {
+    if (!pa.classList.contains('warn')) { pa.classList.add('warn'); pa.textContent = 'Emin misin?'; setTimeout(() => { pa.classList.remove('warn'); pa.textContent = '🗑'; }, 3000); return; }
+    await DB.del('projects', pid); await DB.delFiles(pid);
+    if (pid === state.pid) { resetProject(); }
+    toast('Proje silindi'); renderProjects(); showHomeButtons();
+  } else if (pa.dataset.pa === 'dup') {
+    const rec = await DB.get('projects', pid); if (!rec) return;
+    const np = newPid();
+    for (const a of rec.assets) { const b = await DB.get('files', pid + '|' + a.id); if (b) await DB.put('files', b, np + '|' + a.id); }
+    await DB.put('projects', { ...rec, id: np, name: rec.name + ' (kopya)', updated: Date.now() });
+    toast('Proje kopyalandı'); renderProjects();
+  }
+});
+async function openProject(pid) {
+  toast('Proje açılıyor…', 60000);
+  try {
+    await flushSave();
+    const rec = await DB.get('projects', pid); if (!rec) { toast('Proje bulunamadı'); return; }
+    const files = {};
+    for (const a of rec.assets) files[a.id] = await DB.get('files', pid + '|' + a.id);
+    resetProject();
+    state.pid = pid; state.persisted = true;
+    const amap = {}; let mx = 0;
+    const bump = id => { const m = /^i(\d+)$/.exec(id || ''); if (m) mx = Math.max(mx, +m[1]); };
+    rec.assets.forEach(a => { bump(a.id); if (!files[a.id]) return; const na = { ...a, url: URL.createObjectURL(files[a.id]) }; amap[a.id] = na; state.assets.push(na); state.saved.add(a.id); });
+    let missing = 0;
+    rec.clips.forEach(o => {
+      bump(o.id);
+      const c = Object.assign(DEF_VIS(), { speed: 1, volume: 100 }, o);
+      if (o.aid) { const a = amap[o.aid]; if (!a) { missing++; return; } c.url = a.url; } else if (o.durl) c.url = o.durl;
+      if (c.url) c.el = makeEl(c.url, c.kind);
+      state.clips.push(c);
+    });
+    uid = Math.max(uid, mx + 1);
+    $('#projName').value = rec.name; $('#aspect').value = rec.aspect; setAspect(rec.aspect);
+    state.beats = rec.beats || []; state.bpm = rec.bpm || 0; $('#bpmInfo').textContent = bpmText();
+    hist.list = []; hist.i = -1; commit();
+    renderAssets(); renderTimeline(); renderInspector(); updateSideTabs(); seekTo(0); hideHome();
+    toast(missing ? missing + ' klibin dosyası bulunamadı' : 'Proje açıldı: ' + rec.name, 3000);
+  } catch (e) { console.error(e); toast('Proje açılamadı: ' + (e && e.message || e), 6000); }
+}
+
+/* ---------- Ana menü ---------- */
+const home = $('#home');
+function showHomeButtons() {
+  $('#homeContinue').hidden = !state.clips.length;
+  $('#homeInfo').textContent = state.clips.length + ' klip · ' + fmt(total());
+}
+function showHome() {
+  stopPlay(); home.hidden = false; showHomeButtons();
+  flushSave().then(renderProjects);
+}
+function hideHome() { home.hidden = true; fit(); renderTimeline(); dirty = true; }
+function resetProject() {
+  stopPlay(); state.clips.forEach(c => { if (c.el && c.el.pause) c.el.pause(); });
+  state.assets.forEach(a => { try { if (a.url && a.url.startsWith('blob:')) URL.revokeObjectURL(a.url); } catch (e) {} });
+  state.clips = []; state.assets = []; state.sel = null; state.cur = 0; state.beats = []; state.bpm = 0;
+  state.pid = null; state.persisted = false; state.saved = new Set(); setSaveInfo('');
+  hist.list = []; hist.i = -1; commit();
+  $('#bpmInfo').textContent = bpmText();
+  renderAssets(); renderTimeline(); renderInspector(); updateSideTabs(); dirty = true;
+}
+async function newProject(files) {
+  files = [...files]; if (!files.length) return;
+  await flushSave();
+  resetProject();
+  state.pid = newPid();
+  $('#projName').value = files[0].name.replace(/\.[^.]+$/, '') || 'Adsız Proje';
+  hideHome();
+  await addFiles(files);
+  if (!state.clips.length) showHome();
+}
+const hi = $('#homeInput');
+$('#homeNew').onclick = () => hi.click();
+hi.onchange = () => { const f = [...hi.files]; hi.value = ''; newProject(f); };
+$('#homeContinue').onclick = hideHome;
+$('#logo').onclick = showHome;
+$('#btnProjects').onclick = showHome;
+const hd = $('#homeDrop');
+['dragenter', 'dragover'].forEach(ev => hd.addEventListener(ev, () => hd.classList.add('over')));
+['dragleave', 'drop'].forEach(ev => hd.addEventListener(ev, () => hd.classList.remove('over')));
+$('#projName').addEventListener('input', scheduleSave);
+$('#aspect').addEventListener('change', scheduleSave);
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveProject(); });
+window.addEventListener('pagehide', () => { saveProject(); });
+
+/* ---------- Kare kaydet, kısayollar, yükleme ---------- */
+$('#btnShot').onclick = () => {
+  if (!state.clips.length) { toast('Önce bir video yükleyin'); return; }
+  const sel = state.sel; state.sel = null; state.shot = true; draw(); state.shot = false;
+  let url; try { url = cv.toDataURL('image/png'); } catch (e) { toast('Kare kaydedilemedi'); state.sel = sel; return; }
+  state.sel = sel; dirty = true;
+  const a = document.createElement('a'); a.href = url; a.download = (($('#projName').value || 'kare').trim().replace(/[\\/:*?"<>|]+/g, '_') || 'kare') + '_' + fmt(state.cur).replace(':', '-') + '.png';
+  document.body.appendChild(a); a.click(); a.remove(); toast('Kare PNG olarak indirildi');
+};
+$('#btnKeys').onclick = () => { $('#keysModal').hidden = false; };
+$('#keysClose').onclick = () => { $('#keysModal').hidden = true; };
+window.addEventListener('keydown', e => {
+  if (e.key === '?' && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { $('#keysModal').hidden = !$('#keysModal').hidden; }
+  else if (e.key === 'Escape') $('#keysModal').hidden = true;
+});
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; $('#btnInstall').hidden = false; });
+$('#btnInstall').onclick = async () => { if (!deferredInstall) return; deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) {} deferredInstall = null; $('#btnInstall').hidden = true; };
+window.addEventListener('appinstalled', () => { $('#btnInstall').hidden = true; toast('Uygulama yüklendi 🎉'); });
+
+/* ---------- Başlat ---------- */
+commit(); updateProUI(); renderAssets(); renderTimeline(); renderInspector(); setPlayIcon(); fit();
+requestAnimationFrame(loop);
+DB.open().then(() => { dbOK = true; try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {} }).catch(() => { dbOK = false; }).then(renderProjects);
+if (/^https?:/.test(location.protocol)) { const ml = document.createElement('link'); ml.rel = 'manifest'; ml.href = 'manifest.webmanifest'; document.head.appendChild(ml); }
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
